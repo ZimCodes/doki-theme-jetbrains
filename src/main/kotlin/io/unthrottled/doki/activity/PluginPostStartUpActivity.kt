@@ -1,4 +1,4 @@
-package io.unthrottled.doki.listener
+package io.unthrottled.doki.activity
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
@@ -10,6 +10,6 @@ class PluginPostStartUpActivity : ProjectActivity {
   }
 
   private fun doStuff(project: Project) {
-    TheDokiTheme.instance.projectOpened(project)
+    TheDokiTheme.Companion.instance.projectOpened(project)
   }
 }

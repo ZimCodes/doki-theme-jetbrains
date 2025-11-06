@@ -1,7 +1,7 @@
 package io.unthrottled.doki.config
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil.copyBean
@@ -18,7 +18,7 @@ import java.util.Locale
 class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   companion object {
     val instance: ThemeConfig
-      get() = ServiceManager.getService(ThemeConfig::class.java)
+      get() = ApplicationManager.getApplication().getService(ThemeConfig::class.java)
   }
 
   var ignoreScaling: Boolean = false
@@ -26,7 +26,6 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   var hideDelayMS: Int = 750
   var savedMargins: String = "{}"
   var userId: String = ""
-  var isLafAnimation: Boolean = false
   var isMoveableStickers: Boolean = false
   var isNotShowReadmeAtStartup: Boolean = false
   var version: String = "0.0.0"
@@ -35,7 +34,6 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   var isDokiBackground: Boolean = false
   var isEmptyFrameBackground: Boolean = true
   var showThemeStatusBar: Boolean = true
-  var allowPromotions: Boolean = true
   var currentStickerName: String = CurrentSticker.DEFAULT.name
 
   var isGlobalFontSize: Boolean = false

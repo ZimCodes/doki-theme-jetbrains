@@ -22,11 +22,11 @@
     <applicationService serviceImplementation="io.unthrottled.doki.config.ThemeConfig"/>
     <applicationConfigurable id="0d570cb2-96df-43cc-80da-7f777e6d0afe" displayName="Doki Theme Settings" instance="io.unthrottled.doki.settings.ThemeSettingsUI" groupId="appearance"/>
     <notificationGroup displayType="BALLOON" id="Doki Theme Updates" toolWindowId="Doki Theme Updates" isLogByDefault="false" icon="DokiThemeIcons.DOKI_LOGO"/>
-    <notificationGroup displayType="BALLOON" id="Doki Theme Promotions" toolWindowId="Doki Theme Promotions" isLogByDefault="false" icon="DokiThemeIcons.DOKI_LOGO"/>
     <statusBarWidgetFactory implementation="io.unthrottled.doki.ui.status.ThemeStatusBarProvider" id="io.unthrottled.doki.ui.status.StatusBarFactory"/>
     <editorNotificationProvider implementation="io.unthrottled.doki.internal.DokiEditorNotificationProvider"/>
     <registryKey defaultValue="true" description="Prevent the Doki Theme plugin from updating downloaded assets" key="doki.theme.update.assets"/>
-    <postStartupActivity implementation="io.unthrottled.doki.listener.PluginPostStartUpActivity"/>
+    <postStartupActivity implementation="io.unthrottled.doki.activity.PluginPostStartUpActivity"/>
+    <postStartupActivity implementation="io.unthrottled.doki.activity.LegacyMigrateProjectActivity"/>
     <themeProvider id="e55e70ea-454b-47ef-9270-d46390dd2769" path="/doki/themes/azur_lane/Essex.theme.json"/>
     <themeProvider id="6106e529-efef-444d-9db0-a9b0b444cf1b" path="/doki/themes/blend_s/Maika.theme.json"/>
     <themeProvider id="0527c6fc-316a-4f80-9459-d92ced0e6492" path="/doki/themes/bunny_senpai/Mai_Dark.theme.json"/>
@@ -137,17 +137,10 @@
     <action id="io.unthrottled.doki.actions.DiscreetModeAction" class="io.unthrottled.doki.actions.DiscreetModeAction" text="Toggle Discreet Mode" icon="DokiThemeIcons.SHAME" description="Quickly hide your shame">
       <add-to-group group-id="DokiThemeActions" anchor="last"/>
     </action>
-    <action id="io.unthrottled.doki.actions.ThemeAnimationToggle" class="io.unthrottled.doki.actions.ThemeAnimationToggle" text="Enable Transition Animation" icon="DokiThemeIcons.MAGIC" description="Fancy fade transition animation when changing any look and feel.">
-      <add-to-group group-id="DokiThemeActions" anchor="last"/>
-    </action>
     <action id="io.unthrottled.doki.actions.ShowSettingsAction" class="io.unthrottled.doki.actions.ShowSettingsAction" text="Show Settings" icon="DokiThemeIcons.GEAR_PLAIN" description="Shows the Doki Theme's settings window.">
       <add-to-group group-id="DokiThemeActions" anchor="last"/>
     </action>
     <action id="io.unthrottled.doki.action.ShowEditorNotification" class="io.unthrottled.doki.actions.ShowNotification" text="Show Editor Notification" description="Shows the editor's notification"/>
-    <action id="io.unthrottled.doki.actions.ShowUpdateNotification" class="io.unthrottled.doki.actions.ShowUpdateNotification" text="Show Update Notification" description="Shows the current update notification window." icon="/icons/doki/Doki-Doki-Logo.svg">
-      <add-to-group group-id="DokiThemeActions" anchor="last"/>
-    </action>
-    <action id="io.unthrottled.doki.actions.AniMemePromotion" class="io.unthrottled.doki.actions.AniMemePromotion" text="Show AniMeme Promotion" description="Shows the 'AMII' promotion dialog" icon="DokiThemeIcons.AMII_LOGO"/>
     <action id="io.unthrottled.reset.sticker.margins" icon="AllIcons.Actions.Refresh" class="io.unthrottled.doki.actions.ResetStickerMarginsAction" text="Reset Sticker Margins" description="Restores the default margins &amp; repositions stickers.">
       <add-to-group group-id="DokiThemeActions" anchor="after" relative-to-action="io.unthrottled.doki.actions.ShowSettingsAction"/>
     </action>

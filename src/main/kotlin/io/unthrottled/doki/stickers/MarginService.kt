@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import io.unthrottled.doki.config.ThemeConfig
-import io.unthrottled.doki.notification.UpdateNotification
 import io.unthrottled.doki.promotions.MessageBundle
 import io.unthrottled.doki.util.Logging
 import io.unthrottled.doki.util.logger
@@ -57,9 +56,5 @@ class MarginService : Logging {
   ) {
     savedMargins[getWindowKey(window)] = margin
     ThemeConfig.instance.savedMargins = gson.toJson(savedMargins.toMutableMap())
-    UpdateNotification.showNotificationAcrossProjects(
-      MessageBundle.message("notification.margin.saved.title"),
-      MessageBundle.message("notification.margin.saved.message"),
-    )
   }
 }

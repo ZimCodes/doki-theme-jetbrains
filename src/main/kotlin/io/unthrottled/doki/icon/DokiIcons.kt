@@ -18,10 +18,6 @@ object DokiIcons {
       val TOOL_WINDOW = load("icons/doki/neko_glyph.svg")
     }
 
-    object AMII {
-      val TOOL_WINDOW = load("icons/plugins/amii/plugin-tool-window.svg")
-    }
-
     object Randomizer {
       val TOOL_WINDOW = load("icons/plugins/randomizer/randomizer-plugin-tool-window.svg")
     }

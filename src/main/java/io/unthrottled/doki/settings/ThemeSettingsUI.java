@@ -62,7 +62,6 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
   private JTextPane generalLinks;
   private JSlider notificationOpacitySlider;
   private JCheckBox makeNotificationsTransparentCheckBox;
-  private JCheckBox themeChangeAnimationCheckBox;
   private JSpinner customFontSize;
   private JCheckBox overrideEditorFontSizeCheckBox;
   private JComboBox consoleFontWomboComboBox;
@@ -80,7 +79,6 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
   private com.intellij.ui.components.ActionLink randmizerInstallLink;
   private JSpinner hideDelayMsSpinner;
   private JCheckBox hideOnHoverCheck;
-  private JCheckBox allowPromotionalContentCheckBox;
   private ActionLink iconLink;
 
   @Override
@@ -149,11 +147,6 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
     useCustomStickerCheckBox.setSelected(initialThemeSettingsModel.isCustomSticker());
     useCustomStickerCheckBox.addChangeListener(e ->
       themeSettingsModel.setCustomSticker(useCustomStickerCheckBox.isSelected())
-    );
-
-    allowPromotionalContentCheckBox.setSelected(initialThemeSettingsModel.getAllowPromotionalContent());
-    allowPromotionalContentCheckBox.addChangeListener(e ->
-      themeSettingsModel.setAllowPromotionalContent(allowPromotionalContentCheckBox.isSelected())
     );
 
     warningLabel.setForeground(UIUtil.getContextHelpForeground());
@@ -239,10 +232,6 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
     notificationOpacitySlider.addChangeListener(change ->
       themeSettingsModel.setNotificationOpacity(notificationOpacitySlider.getValue())
     );
-
-    themeChangeAnimationCheckBox.setSelected(initialThemeSettingsModel.isLafAnimation());
-    themeChangeAnimationCheckBox.addActionListener(e ->
-      themeSettingsModel.setLafAnimation(themeChangeAnimationCheckBox.isSelected()));
 
     enableDimensionCappingCheckBox.setSelected(initialThemeSettingsModel.getCapStickerDimensions());
     enableDimensionCappingCheckBox.addActionListener(e -> {

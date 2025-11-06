@@ -80,7 +80,6 @@
     <option name="JUPYTER.SAUSAGE_BUTTON_BORDER_COLOR" value="$borderColor$" />
     <option name="JUPYTER.GUTTER_OUTPUT_EXECUTION_COUNT" value="$terminal.ansiRed$" />
     <option name="JUPYTER.PROGRESS_STATUS_RUNNING_COLOR" value="%accentColor%" />
-    <option name="PROMOTION_PANE" value="%accentColor%5a"/>
     <option name="METHOD_SEPARATORS_COLOR" value="$borderColor$"/>
     <option name="RECENT_LOCATIONS_SELECTION" value="$codeBlock$"/>
     <option name="DIFF_SEPARATORS_BACKGROUND" value="%accentColor%1a"/>

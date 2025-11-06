@@ -98,7 +98,6 @@ You can choose themes based on characters from these various Anime, Manga, or Vi
       - [Suggestive Content](#suggestive-content)
       - [Misc Content Settings](#misc-content-settings)
     - [Other Settings](#other-settings)
-      - [Promotional Content](#promotional-content)
   - [Fonts](#fonts)
 - [Miscellaneous](#miscellaneous)
   - [Custom Icons](#doki-icons) 
@@ -137,11 +136,6 @@ Instead of addressing the real problems, you can just make your problems invisib
 This will clear any anime content from the IDE, and will even hide the theme name in the status bar. That way
 you do not have to explain anything, to anyone (except for the heart themed folder icons). 
 When the coast is clear, just uncheck the config or toggle the action, and your previous settings will be restored.
-
-
-This plugin is also integrated with the [Anime Meme Plugin](https://github.com/ani-memes/AMII#discreet-mode), for the ultimate shame hiding experience.
-Enabling/disabling `Discreet Mode` for this plugin will enable/disable `Discrete Mode` in the other plugin. However, this does not work the other way around. 
-Only the Doki Theme can enable/disable modes across plugins.
 
 
 #### Sticker
@@ -284,36 +278,6 @@ Applies for the following content:
 
 ![image](https://user-images.githubusercontent.com/15972415/108612695-aedba280-73b0-11eb-8e59-2e3229918111.png)
 
-
-### Other Settings
-
-**Notification Opacity:** Are you tired of pesky notifications covering up your sticker?
-I know I was, now you can fix that problem. You are free to adjust the opacity of the notification window as you please.
-You can hit `Apply` to test out your new settings!
-
-**Ryuko Dark**
-
-![Notification Opacity](./assets/readmeAssets/notification_opacity.gif)
-
-**Theme Change Animation** enables the neat fade-in animation effect as you change your theme.
-You can see a rough example in the [quick theme switch section.](#quick-theme-switch)
-
-### Promotional Content
-
-I am a weeb who builds a lot of neat weebie things. A lot of which I think you will enjoy.
-By default, I have opted you into receiving a _single_ promotion to the [AniMeme Plugin](https://github.com/ani-memes/AMII#amii-anime-meme-ide-integration).
-This notification window _will_ show up when your IDE has been idle, and you've met these following conditions:
-
-- You are online
-- You have weeb content enabled (sticker or background)
-- It's been at least 7 days since you've installed the Doki Theme.
-
-You will also only ever see the promotion once on each machine, the config is shared across IDEs on your machine.
-You can opt yourself out at any time before then. 
-**Note**: if you've opted out, for the best experience, be sure to restart any of your open IDEs (eg: Intellij, Webstorm) if you have the Doki Theme installed across IDEs.
-
-I'm only promoting one item, and that isn't going to change anytime soon.
-Thanks for your understanding and I hope you enjoy the stuff I've built!
 
 ## Fonts
 

@@ -19,7 +19,6 @@ import java.util.Collections
 import java.util.concurrent.Callable
 
 const val MOTIVATOR_PLUGIN_ID = "zd.zero.waifu-motivator-plugin"
-const val AMII_PLUGIN_ID = "io.unthrottled.amii"
 const val RANDOMIZER_PLUGIN_ID = "io.unthrottled.theme.randomizer"
 const val DOKI_ICONS_PLUGIN_ID = "io.unthrottled.doki.icons"
 
@@ -34,11 +33,6 @@ object PluginService : Logging {
   fun areIconsInstalled(): Boolean =
     PluginManagerCore.isPluginInstalled(
       PluginId.getId(DOKI_ICONS_PLUGIN_ID),
-    )
-
-  fun isAmiiInstalled(): Boolean =
-    PluginManagerCore.isPluginInstalled(
-      PluginId.getId(AMII_PLUGIN_ID),
     )
 
   fun isRandomizerInstalled(): Boolean =
@@ -104,25 +98,5 @@ object PluginService : Logging {
       logger().warn("Unable to check to see if plugin $ids is compatible for reasons", e)
       emptyList()
     }
-  }
-
-  fun canAmiiBeInstalled(): Boolean {
-    return ApplicationManager.getApplication().executeOnPooledThread(
-      Callable {
-        runSafelyWithResult({
-          val pluginId = PluginId.getId(AMII_PLUGIN_ID)
-          val lastCompatiblePluginUpdate =
-            getLastCompatiblePluginUpdate(
-              Collections.singleton(pluginId),
-            )
-          lastCompatiblePluginUpdate.firstOrNull { pluginNode ->
-            pluginNode.pluginId == AMII_PLUGIN_ID
-          } != null
-        }) {
-          logger().warn("Unable to check to see if AMII can be installed", it)
-          false
-        }
-      },
-    ).get()
   }
 }

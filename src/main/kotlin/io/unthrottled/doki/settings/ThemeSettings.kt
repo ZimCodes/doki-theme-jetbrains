@@ -11,12 +11,9 @@ import io.unthrottled.doki.settings.actors.ConsoleFontActor
 import io.unthrottled.doki.settings.actors.CustomFontSizeActor
 import io.unthrottled.doki.settings.actors.DiscreetModeActor
 import io.unthrottled.doki.settings.actors.EmptyFrameBackgroundActor
-import io.unthrottled.doki.settings.actors.LafAnimationActor
 import io.unthrottled.doki.settings.actors.MoveableStickerActor
-import io.unthrottled.doki.settings.actors.PromotionSettingActor
-import io.unthrottled.doki.settings.actors.SeeThroughNotificationsActor
-import io.unthrottled.doki.settings.actors.ShowReadmeActor
 import io.unthrottled.doki.settings.actors.StickerActor
+import io.unthrottled.doki.settings.actors.SeeThroughNotificationsActor
 import io.unthrottled.doki.settings.actors.StickerHideActor
 import io.unthrottled.doki.settings.actors.ThemeActor
 import io.unthrottled.doki.settings.actors.ThemeStatusBarActor
@@ -30,7 +27,6 @@ import javax.swing.DefaultComboBoxModel
 
 data class ThemeSettingsModel(
   var areStickersEnabled: Boolean,
-  var isLafAnimation: Boolean,
   var currentTheme: String,
   var showThemeStatusBar: Boolean,
   var currentSticker: CurrentSticker,
@@ -40,7 +36,6 @@ data class ThemeSettingsModel(
   var discreetMode: Boolean,
   var isEmptyFrameBackground: Boolean,
   var isCustomSticker: Boolean,
-  var allowPromotionalContent: Boolean,
   var customStickerPath: String,
   var isCustomFontSize: Boolean,
   var customFontSizeValue: Int,
@@ -75,7 +70,6 @@ object ThemeSettings {
   fun createThemeSettingsModel(): ThemeSettingsModel =
     ThemeSettingsModel(
       areStickersEnabled = ThemeConfig.instance.currentStickerLevel == StickerLevel.ON,
-      isLafAnimation = ThemeConfig.instance.isLafAnimation,
       currentTheme = ThemeManager.instance.currentTheme.map { it.name }.orElseGet { ThemeManager.DEFAULT_THEME_NAME },
       showThemeStatusBar = ThemeConfig.instance.showThemeStatusBar,
       currentSticker = ThemeConfig.instance.currentSticker,
@@ -101,12 +95,9 @@ object ThemeSettings {
       ignoreScaling = ThemeConfig.instance.ignoreScaling,
       hideOnHover = ThemeConfig.instance.hideOnHover,
       hideDelayMS = ThemeConfig.instance.hideDelayMS,
-      allowPromotionalContent = ThemeConfig.instance.allowPromotions,
     )
 
   fun apply(themeSettingsModel: ThemeSettingsModel) {
-    LafAnimationActor.enableAnimation(themeSettingsModel.isLafAnimation)
-    ShowReadmeActor.dontShowReadmeOnStartup(themeSettingsModel.isNotShowReadmeAtStartup)
     StickerActor.enableStickers(themeSettingsModel.areStickersEnabled, false)
     StickerActor.swapStickers(themeSettingsModel.currentSticker, false)
     StickerActor.ignoreScaling(themeSettingsModel.ignoreScaling)
@@ -144,7 +135,6 @@ object ThemeSettings {
     )
     DiscreetModeActor.enableDiscreetMode(themeSettingsModel.discreetMode)
     StickerHideActor.setStickerHideStuff(themeSettingsModel.hideOnHover, themeSettingsModel.hideDelayMS)
-    PromotionSettingActor.optInToPromotion(themeSettingsModel.allowPromotionalContent)
     ApplicationManager.getApplication().messageBus.syncPublisher(
       THEME_CONFIG_TOPIC,
     ).themeConfigUpdated(ThemeConfig.instance)

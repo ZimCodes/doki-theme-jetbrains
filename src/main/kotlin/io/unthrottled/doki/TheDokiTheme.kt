@@ -17,12 +17,8 @@ import io.unthrottled.doki.laf.LookAndFeelInstaller
 import io.unthrottled.doki.laf.LookAndFeelInstaller.installAllUIComponents
 import io.unthrottled.doki.legacy.EXPUIFixer
 import io.unthrottled.doki.legacy.LegacyMigration
-import io.unthrottled.doki.notification.UpdateNotification
-import io.unthrottled.doki.promotions.PromotionManager
 import io.unthrottled.doki.service.ConsoleFontService.applyConsoleFont
 import io.unthrottled.doki.service.CustomFontSizeService.applyCustomFontSize
-import io.unthrottled.doki.service.UpdateNotificationUpdater
-import io.unthrottled.doki.service.UpdateNotificationUpdater.attemptToRefreshUpdateNotification
 import io.unthrottled.doki.settings.actors.ThemeActor.setDokiTheme
 import io.unthrottled.doki.stickers.EditorBackgroundWallpaperService
 import io.unthrottled.doki.stickers.EmptyFrameWallpaperService
@@ -57,7 +53,6 @@ class TheDokiTheme : Disposable {
   private val connection = ApplicationManager.getApplication().messageBus.connect()
 
   init {
-    PromotionManager.init()
     hackLAF()
     LegacyMigration.migrateIfNecessary()
     IconPathReplacementComponent.initialize()
@@ -85,7 +80,6 @@ class TheDokiTheme : Disposable {
             setSVGColorPatcher(it)
             installAllUIComponents()
             applyFonts()
-            attemptToRefreshUpdateNotification(it)
           }) {
             IconPathReplacementComponent.removePatchers()
             LookAndFeelInstaller.removeIcons()
@@ -108,25 +102,11 @@ class TheDokiTheme : Disposable {
         StickerPaneService.instance.checkForUpdates(it)
       }
 
-    val isNewUser = ThemeConfig.instance.userId.isEmpty()
     getVersion()
       .ifPresent { version ->
         if (version != ThemeConfig.instance.version) {
           LegacyMigration.newVersionMigration(project)
           ThemeConfig.instance.version = version
-          ThemeManager.instance.currentTheme.ifPresent {
-            ApplicationManager.getApplication().invokeLater {
-              UpdateNotification.display(
-                project,
-                version,
-                isNewUser,
-              )
-            }
-          }
-        }
-
-        ApplicationManager.getApplication().invokeLater {
-          PromotionManager.registerPromotion(version)
         }
       }
     registerUser()
@@ -151,7 +131,6 @@ class TheDokiTheme : Disposable {
 
   override fun dispose() {
     connection.dispose()
-    UpdateNotificationUpdater.dispose()
   }
 
   fun init() {
