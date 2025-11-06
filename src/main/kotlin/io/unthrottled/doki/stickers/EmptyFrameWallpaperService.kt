@@ -2,6 +2,7 @@ package io.unthrottled.doki.stickers
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.wm.impl.IdeBackgroundUtil
 import io.unthrottled.doki.assets.AssetCategory
 import io.unthrottled.doki.assets.AssetManager
@@ -12,6 +13,7 @@ import io.unthrottled.doki.themes.ThemeManager
 import io.unthrottled.doki.util.doOrElse
 import java.util.Optional
 
+@Service
 class EmptyFrameWallpaperService {
   companion object {
     val instance: EmptyFrameWallpaperService

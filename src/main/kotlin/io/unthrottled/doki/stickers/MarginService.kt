@@ -3,6 +3,7 @@ package io.unthrottled.doki.stickers
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import io.unthrottled.doki.config.ThemeConfig
 import io.unthrottled.doki.notification.UpdateNotification
 import io.unthrottled.doki.promotions.MessageBundle
@@ -11,6 +12,7 @@ import io.unthrottled.doki.util.logger
 import io.unthrottled.doki.util.runSafelyWithResult
 import java.util.concurrent.ConcurrentHashMap
 
+@Service
 class MarginService : Logging {
   companion object {
     private const val STICKER_Y_OFFSET = 0.05

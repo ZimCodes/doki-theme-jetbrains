@@ -72,7 +72,7 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   var currentSticker: CurrentSticker
     get() {
       val stickerNameType = currentStickerName.uppercase(Locale.getDefault())
-      return if (CurrentSticker.values().none { it.name == stickerNameType }) {
+      return if (CurrentSticker.entries.none { it.name == stickerNameType }) {
         val defaultSticker = CurrentSticker.DEFAULT
         currentSticker = defaultSticker
         defaultSticker
@@ -87,7 +87,7 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   val currentStickerLevel: StickerLevel
     get() {
       val theStickerLevel = stickerLevel.uppercase(Locale.getDefault())
-      return if (StickerLevel.values().none { it.name == theStickerLevel }) {
+      return if (StickerLevel.entries.none { it.name == theStickerLevel }) {
         val defaultStickerLevel = StickerLevel.ON
         stickerLevel = defaultStickerLevel.name
         defaultStickerLevel

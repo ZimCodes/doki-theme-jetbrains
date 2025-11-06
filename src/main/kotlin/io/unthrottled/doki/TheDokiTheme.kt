@@ -5,6 +5,7 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationActivationListener
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
@@ -32,6 +33,7 @@ import io.unthrottled.doki.util.toOptional
 import java.util.Optional
 import java.util.UUID
 
+@Service
 class TheDokiTheme : Disposable {
   companion object {
     const val COMMUNITY_PLUGIN_ID = "io.acari.DDLCTheme"

@@ -28,3 +28,4 @@ masterThemes
 _masterThemes/
 .qodana/
 .intellijPlatform/
+.kotlin

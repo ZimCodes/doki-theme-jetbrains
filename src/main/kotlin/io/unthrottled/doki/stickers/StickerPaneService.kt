@@ -1,6 +1,7 @@
 package io.unthrottled.doki.stickers
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.wm.impl.IdeBackgroundUtil
 import io.unthrottled.doki.assets.AssetCategory
@@ -24,6 +25,7 @@ data class StickerHideConfig(
   val hideDelayMS: Int,
 )
 
+@Service
 @Suppress("TooManyFunctions")
 class StickerPaneService {
   companion object {

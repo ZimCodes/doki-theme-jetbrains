@@ -1,6 +1,7 @@
 package io.unthrottled.doki.settings;
 
 import com.intellij.ide.util.BrowseFilesListener;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.BrowseFolderRunnable;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -16,9 +17,11 @@ import javax.swing.JTextField;
 public class CustomStickerChooser extends DialogWrapper {
   private JPanel contentPane;
   private JTextField textField1;
+  private final Project project;
 
   public CustomStickerChooser(Project project, String path) {
     super(project, true);
+    this.project = project;
 
     setTitle(MessageBundle.message("settings.general.content.custom.sticker.modal.title"));
     textField1.setText(path);
@@ -37,10 +40,8 @@ public class CustomStickerChooser extends DialogWrapper {
     ExtendableTextField extendableTextField = new ExtendableTextField();
     textField1 = extendableTextField.addBrowseExtension(
       new BrowseFolderRunnable<>(
-        MessageBundle.message("settings.general.content.custom.sticker.modal.chooser.title"),
-        MessageBundle.message("settings.general.content.custom.sticker.modal.chooser.description"),
-        null,
-        BrowseFilesListener.SINGLE_FILE_DESCRIPTOR,
+        this.project,
+        FileChooserDescriptorFactory.singleFile(),
         extendableTextField,
         TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
       ), null

@@ -5,12 +5,14 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.ide.ui.laf.UIThemeLookAndFeelInfo
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import io.unthrottled.doki.config.ThemeConfig
 import io.unthrottled.doki.themes.DokiTheme
 import io.unthrottled.doki.themes.ThemeManager
 import io.unthrottled.doki.util.doOrElse
 import io.unthrottled.doki.util.toOptional
 
+@Service
 class StickerComponent :
   LafManagerListener,
   Disposable {

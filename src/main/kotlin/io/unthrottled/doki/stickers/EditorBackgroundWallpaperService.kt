@@ -2,6 +2,7 @@ package io.unthrottled.doki.stickers
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.wm.impl.IdeBackgroundUtil.EDITOR_PROP
 import com.intellij.openapi.wm.impl.IdeBackgroundUtil.Fill
 import io.unthrottled.doki.assets.AssetCategory
@@ -18,6 +19,7 @@ import java.util.Optional
 const val DOKI_BACKGROUND_PROP: String = "io.unthrottled.doki.background"
 private const val PREVIOUS_BACKGROUND = "io.unthrottled.doki.previous-background"
 
+@Service
 @Suppress("TooManyFunctions") // cuz I said so
 internal class EditorBackgroundWallpaperService {
   companion object {
