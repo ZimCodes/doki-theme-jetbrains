@@ -1,5 +1,4 @@
 scripts/
-testAssets/
 
 # Generated Themes Directory
 src/main/resources/doki/themes
@@ -21,7 +20,6 @@ classes/
 
 #gradle.properties
 *.icls
-src/test/resources/
 
 masterThemes/
 masterThemes

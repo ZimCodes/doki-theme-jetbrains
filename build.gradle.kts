@@ -1,5 +1,3 @@
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-
 plugins {
   // Custom plugin for building all the themes
   id("doki-theme-plugin")
@@ -30,11 +28,6 @@ repositories {
 dependencies {
   implementation("commons-io:commons-io:2.15.1")
   implementation("org.javassist:javassist:3.29.2-GA")
-  implementation("io.sentry:sentry:6.28.0")
-  testImplementation("org.assertj:assertj-core:3.25.3")
-  testImplementation("io.mockk:mockk:1.13.8")
-  testImplementation(libs.junit)
-  testImplementation(libs.opentest4j)
 
   // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
   intellijPlatform {
@@ -45,16 +38,6 @@ dependencies {
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
     plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
-
-    testFramework(TestFrameworkType.Platform)
-  }
-}
-
-configurations {
-  implementation.configure {
-    // sentry brings in a slf4j that breaks when
-    // with the platform slf4j
-    exclude("org.slf4j")
   }
 }
 
@@ -102,25 +85,4 @@ tasks {
 //  publishPlugin {
 //    dependsOn(patchChangelog)
 //  }
-}
-
-intellijPlatformTesting {
-  runIde {
-    register("runIdeForUiTests") {
-      task {
-        jvmArgumentProviders += CommandLineArgumentProvider {
-          listOf(
-            "-Drobot-server.port=8082",
-            "-Dide.mac.message.dialogs.as.sheets=false",
-            "-Djb.privacy.policy.text=<!--999.999-->",
-            "-Djb.consents.confirmation.enabled=false",
-          )
-        }
-      }
-
-      plugins {
-        robotServerPlugin()
-      }
-    }
-  }
 }
