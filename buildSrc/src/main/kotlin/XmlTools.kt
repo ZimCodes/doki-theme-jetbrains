@@ -1,6 +1,6 @@
 import groovy.util.Node
-import groovy.util.XmlNodePrinter
-import groovy.util.XmlParser
+import groovy.xml.XmlNodePrinter
+import groovy.xml.XmlParser
 import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
 import org.xml.sax.SAXParseException

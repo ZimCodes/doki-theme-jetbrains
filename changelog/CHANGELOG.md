@@ -15,3 +15,5 @@
 - Removes theme switcher from Doki Settings
 - Replace deprecated `Alarms()` in place of Kotlin coroutines
 - Removes legacy project migration algorithms and activities
+- Update dependencies
+- Update gradle from 8.13 to 9.2

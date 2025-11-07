@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-  implementation("org.jsoup:jsoup:1.17.2")
-  implementation("com.google.code.gson:gson:2.10.1")
+  implementation("org.jsoup:jsoup:1.21.2")
+  implementation("com.google.code.gson:gson:2.13.2")
   implementation("io.unthrottled.doki.build.jvm:doki-build-source-jvm:88.0.5")
 }

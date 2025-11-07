@@ -2,8 +2,8 @@ plugins {
   // Custom plugin for building all the themes
   id("doki-theme-plugin")
   id("java") // Java support
-  alias(libs.plugins.kotlin) // Kotlin support
-  alias(libs.plugins.intelliJPlatform) // IntelliJ Platform Gradle Plugin
+  id("org.jetbrains.kotlin.jvm") version "2.3.0-Beta2"
+  id("org.jetbrains.intellij.platform") version "2.10.4"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -26,8 +26,8 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-  implementation("commons-io:commons-io:2.15.1")
-  implementation("org.javassist:javassist:3.29.2-GA")
+  implementation("commons-io:commons-io:2.20.0")
+  implementation("org.javassist:javassist:3.30.2-GA")
 
   // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
   intellijPlatform {
