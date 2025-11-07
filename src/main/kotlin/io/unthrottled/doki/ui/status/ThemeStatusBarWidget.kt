@@ -86,7 +86,7 @@ class ThemeStatusBarWidget(private val project: Project) :
             THEME_SETTINGS_DISPLAY_NAME,
           )
         },
-        ModalityState.NON_MODAL,
+        ModalityState.nonModal(),
       )
     }
 }

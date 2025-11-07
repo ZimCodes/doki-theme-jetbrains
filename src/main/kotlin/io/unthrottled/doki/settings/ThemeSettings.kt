@@ -15,7 +15,6 @@ import io.unthrottled.doki.settings.actors.MoveableStickerActor
 import io.unthrottled.doki.settings.actors.StickerActor
 import io.unthrottled.doki.settings.actors.SeeThroughNotificationsActor
 import io.unthrottled.doki.settings.actors.StickerHideActor
-import io.unthrottled.doki.settings.actors.ThemeActor
 import io.unthrottled.doki.settings.actors.ThemeStatusBarActor
 import io.unthrottled.doki.stickers.CurrentSticker
 import io.unthrottled.doki.stickers.CustomStickerService
@@ -116,7 +115,6 @@ object ThemeSettings {
       themeSettingsModel.smallMaxStickerWidth,
       themeSettingsModel.smallMaxStickerHeight,
     )
-    ThemeActor.applyTheme(themeSettingsModel.currentTheme)
     ThemeStatusBarActor.applyConfig(themeSettingsModel.showThemeStatusBar)
     MoveableStickerActor.moveableStickers(themeSettingsModel.isMoveableStickers)
     BackgroundActor.handleBackgroundUpdate(themeSettingsModel.isDokiBackground)

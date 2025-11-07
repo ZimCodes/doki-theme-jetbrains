@@ -16,10 +16,8 @@ import io.unthrottled.doki.icon.IconPathReplacementComponent
 import io.unthrottled.doki.laf.LookAndFeelInstaller
 import io.unthrottled.doki.laf.LookAndFeelInstaller.installAllUIComponents
 import io.unthrottled.doki.legacy.EXPUIFixer
-import io.unthrottled.doki.legacy.LegacyMigration
 import io.unthrottled.doki.service.ConsoleFontService.applyConsoleFont
 import io.unthrottled.doki.service.CustomFontSizeService.applyCustomFontSize
-import io.unthrottled.doki.settings.actors.ThemeActor.setDokiTheme
 import io.unthrottled.doki.stickers.EditorBackgroundWallpaperService
 import io.unthrottled.doki.stickers.EmptyFrameWallpaperService
 import io.unthrottled.doki.stickers.StickerPaneService
@@ -54,7 +52,6 @@ class TheDokiTheme : Disposable {
 
   init {
     hackLAF()
-    LegacyMigration.migrateIfNecessary()
     IconPathReplacementComponent.initialize()
     EXPUIFixer.fixExperimentalUI()
     installAllUIComponents()
@@ -64,7 +61,6 @@ class TheDokiTheme : Disposable {
       ApplicationActivationListener.TOPIC,
       object : ApplicationActivationListener {
         override fun applicationActivated(ideFrame: IdeFrame) {
-          userOnBoarding()
           ThemeManager.instance.currentTheme.ifPresent {
             setSVGColorPatcher(it)
           }
@@ -105,22 +101,10 @@ class TheDokiTheme : Disposable {
     getVersion()
       .ifPresent { version ->
         if (version != ThemeConfig.instance.version) {
-          LegacyMigration.newVersionMigration(project)
           ThemeConfig.instance.version = version
         }
       }
     registerUser()
-  }
-
-  private fun userOnBoarding() {
-    if (ThemeConfig.instance.isFirstTime &&
-      ThemeManager.instance.currentTheme.isPresent.not()
-    ) {
-      setDokiTheme(ThemeManager.instance.themeByName(ThemeManager.DEFAULT_THEME_NAME))
-      ThemeConfig.instance.isFirstTime = false
-    } else if (ThemeConfig.instance.isFirstTime) {
-      ThemeConfig.instance.isFirstTime = false
-    }
   }
 
   private fun registerUser() {

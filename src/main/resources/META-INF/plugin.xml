@@ -26,7 +26,6 @@
     <editorNotificationProvider implementation="io.unthrottled.doki.internal.DokiEditorNotificationProvider"/>
     <registryKey defaultValue="true" description="Prevent the Doki Theme plugin from updating downloaded assets" key="doki.theme.update.assets"/>
     <postStartupActivity implementation="io.unthrottled.doki.activity.PluginPostStartUpActivity"/>
-    <postStartupActivity implementation="io.unthrottled.doki.activity.LegacyMigrateProjectActivity"/>
     <themeProvider id="e55e70ea-454b-47ef-9270-d46390dd2769" path="/doki/themes/azur_lane/Essex.theme.json"/>
     <themeProvider id="6106e529-efef-444d-9db0-a9b0b444cf1b" path="/doki/themes/blend_s/Maika.theme.json"/>
     <themeProvider id="0527c6fc-316a-4f80-9459-d92ced0e6492" path="/doki/themes/bunny_senpai/Mai_Dark.theme.json"/>

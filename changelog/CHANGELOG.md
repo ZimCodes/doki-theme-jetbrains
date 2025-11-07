@@ -1,6 +1,6 @@
 # Changelog
 ---
-## 1.17.0 - [Build Support 2025.2] 
+## 2.0.0 - [Build Support 2025.2] 
 - Removes error logging
 - Removes test implementations
 - Removes deprecated items
@@ -12,3 +12,6 @@
 - Remove 1st time user notifications
 - Replace option to toggle discreet mode for **all** promotional plugins. Discreet mode setting will toggle for this plugin only.
 - Remove option to apply theme change animation
+- Removes theme switcher from Doki Settings
+- Replace deprecated `Alarms()` in place of Kotlin coroutines
+- Removes legacy project migration algorithms and activities
