@@ -618,15 +618,10 @@ open class BuildThemes : DefaultTask() {
                 (dudeChild.name().toString() != "value")
             } != null
           ) {
-            Collections.sort(currentDude) { a, b ->
-              val left = a as Node
-              val right = b as Node
-
-              getComparable(left).compareTo(
-                getComparable(right)
-              )
-            }
-            queue.addAll(currentDude)
+            @Suppress("UNCHECKED_CAST")
+            val nodeList = currentDude as MutableList<Node>
+            nodeList.sortBy { node -> getComparable(node)}
+            queue.addAll(nodeList)
           }
         }
       }
