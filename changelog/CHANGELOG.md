@@ -21,3 +21,6 @@
 - Increase max heap and metaspace for Gradle project
 - Update README
 - Remove workflow files
+- Fix [Issue #824](https://github.com/doki-theme/doki-theme-jetbrains/issues/824): Text spacing shrinks when zoom is above `100%`
+- Fix [Issue #821](https://github.com/doki-theme/doki-theme-jetbrains/issues/821): Left/Right ToolWindow Toolbar not following current Doki theme.
+- Fix [Issue #819](https://github.com/doki-theme/doki-theme-jetbrains/issues/820): Hatsune Miku theme's Visual Line & Hard wrap guides' color matching the editor background, making it hard to see
