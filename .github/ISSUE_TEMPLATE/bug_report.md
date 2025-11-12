@@ -28,5 +28,5 @@ It should contain:
 * A list of enabled plugins -->
 
 
-**Screenshots**
+**Screenshots/Video**
 <!-- If applicable, add screenshots to help explain your problem. -->

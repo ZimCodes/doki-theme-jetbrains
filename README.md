@@ -1,13 +1,14 @@
-Doki Theme: Jetbrains IDEs
+Doki Theme: Jetbrains IDEs - Maintenance
 ---
 
-![Downloads](https://img.shields.io/jetbrains/plugin/d/10804)
-![Rating](https://img.shields.io/jetbrains/plugin/r/rating/10804)
-![Version](https://img.shields.io/jetbrains/plugin/v/10804)
-![Build](https://github.com/doki-theme/doki-theme-jetbrains/workflows/Release/badge.svg)
+![GitHub Release](https://img.shields.io/github/v/release/ZimCodes/doki-theme-jetbrains?display_name=tag&label=Version)
 
-### https://doki-theme.unthrottled.io/
-
+> ***This repo was created to provide maintenance for the main project
+repo, [Unthrottled / doki-theme-jetbrains](https://github.com/doki-theme/doki-theme-jetbrains), until
+productivity occurs
+there once again!**
+>
+> *Can't let the creator's awesome work go to waste now, can we?*
 ## Quick Theme Preview
 
 ![Themes](./assets/screenshots/themes.webp)
@@ -70,11 +71,6 @@ You can choose themes based on characters from these various Anime, Manga, or Vi
 
 ## Installation
 
-- Using IDE built-in plugin system:
-
-  <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Doki Theme"</kbd> >
-  <kbd>Install Plugin</kbd>
-
 - Manually:
 
   Download the [latest release](https://github.com/doki-theme/doki-theme-jetbrains/releases/latest) and install it manually using
@@ -101,7 +97,6 @@ You can choose themes based on characters from these various Anime, Manga, or Vi
   - [Fonts](#fonts)
 - [Miscellaneous](#miscellaneous)
   - [Custom Icons](#doki-icons) 
-  - [Contributing](#contributing) 
   - [Quick Theme Switch](#quick-theme-switch)
   - [Theme Requests](#theme-requests)
   - [Plugin Art](#plugin-art)
@@ -117,8 +112,6 @@ You can access the settings menu here:
 <kbd>Preferences</kbd> > <kbd>Appearance & Behavior</kbd> > <kbd>Doki Theme Settings</kbd>
 
 ## General Settings
-
-**Current Theme** allows you to change the look and feel of your IDE with one of the plugin's supplied themes.
 
 ### Content Settings
 
@@ -305,17 +298,10 @@ This only applies to any Doki Themes. You must enable the `Override Console Font
 Give your IDE that extra something with the [Doki Theme Icons](https://github.com/doki-theme/doki-theme-icons-jetbrains#doki-theme-icons-jetbrains).
 Custom tailored to work well with your favorite theme! 
 
-
-## Contributing
-
-If you want to get your workstation set up to work on the plugin,
-then you'll want to check out the [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on what is needed.
-
 ## Quick Theme Switch
 
 You've got a ton of new themes now, and you want to take a quick peek at each of them.
-Well you can use the [Quick Switch Scheme](https://www.jetbrains.com/help/idea/switching-between-schemes.html)
-to browse the `Look and Feel`.
+To do that, use the shortcut: <kbd>⌘ Cmd</kbd> + <kbd>\`</kbd> _(MacOS)_ | <kbd>CTRL</kbd> + <kbd>\`</kbd> _(Others)_
 
 ![Quick Switch](./assets/readmeAssets/quick_switch.gif)
 
@@ -327,10 +313,6 @@ This allows me to update the assets without users needing to update the plugin a
 I also have them committed to GitHub as well at https://github.com/doki-theme/doki-theme-assets .
 You should be able to find what you are looking for in the `backgrounds/wallpapers` & `stickers` directories.
 
-## Theme Requests
-
-If you want your main squeeze to be featured in the Doki Theme suite, feel free to [submit a theme request](https://github.com/doki-theme/doki-master-theme/issues).
-
 ## Enjoying the plugin?
 
 Great! I am glad you like it!
@@ -341,13 +323,16 @@ Also, giving it a good [review on the plugins page](https://plugins.jetbrains.co
 
 ## Contributions?
 
-I think your voice needs to be heard! You probably have good ideas, so feel free to submit your feedback as [an issue](https://github.com/doki-theme/doki-theme-jetbrains/issues/new).
+If you would like to contribute to the project, please feel free to create a pull request with your ideas!
 
-Help make this plugin better!
+Also check out the [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-## Release channel
-
-Want updates sooner? I have a [canary release channel](https://github.com/Unthrottled/jetbrains-plugin-repository) that you can set up to get the latest and greatest!
+Some ways to contribute:
+- Create new icons.
+  - Here's an [Icon TODO List](https://github.com/doki-theme/doki-theme-icons/blob/main/todo) created by Unthrottled which includes icons to be added in future versions.
+- Add cool new features
+- Update existing themes and icons providing that doki vibe
+- Create a new theme entirely
 
 ## Changelog
 

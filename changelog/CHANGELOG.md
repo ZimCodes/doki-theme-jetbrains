@@ -19,3 +19,5 @@
 - Upgrade gradle from 8.13 to 9.2
 - Project is now configuration cache compatible
 - Increase max heap and metaspace for Gradle project
+- Update README
+- Remove workflow files

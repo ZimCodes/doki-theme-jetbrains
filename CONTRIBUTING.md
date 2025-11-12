@@ -238,9 +238,3 @@ Here are all the relevant gradle tasks you'll be using:
 - `ktlintFormat`
 - `runIde`
 - `buildPlugin` - if you want to manually install the plugin to an existing IDE.
-
-### Submitting a pull request.
-
-Right now, the pre-merge pipeline will pull down the most current master themes and attempt to `buildPlugin`. This is
-inconvenient if your new themes are not in master, then your pre-merge pipeline will fail. It's not going to break
-anything, but the CI will have to be run again once the new themes are part of the master theme suite.
