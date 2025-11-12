@@ -16,4 +16,6 @@
 - Replace deprecated `Alarms()` in place of Kotlin coroutines
 - Removes legacy project migration algorithms and activities
 - Update dependencies
-- Update gradle from 8.13 to 9.2
+- Upgrade gradle from 8.13 to 9.2
+- Project is now configuration cache compatible
+- Increase max heap and metaspace for Gradle project

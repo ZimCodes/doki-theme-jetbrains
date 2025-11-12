@@ -26,6 +26,13 @@ import io.unthrottled.doki.build.jvm.tools.GroupToNameMapping.getLafNamePrefix
 import io.unthrottled.doki.build.jvm.tools.PathTools.cleanDirectory
 import io.unthrottled.doki.build.jvm.tools.resolveColor
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.InputStreamReader
@@ -60,7 +67,28 @@ data class JetbrainsThemeOnlyDefinition(
 
 fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
 
-open class BuildThemes : DefaultTask() {
+abstract class BuildThemes : DefaultTask() {
+  @get:Internal
+  abstract val rootResourcePath: DirectoryProperty
+
+  @get:InputDirectory
+  abstract val buildSourceAssetDirectory: DirectoryProperty
+
+  @get:InputDirectory
+  abstract val masterThemesDirectory: DirectoryProperty
+
+  @get:InputFile
+  abstract val resMasterThemeSchema: RegularFileProperty
+
+  @get:OutputDirectory
+  abstract val resDokiThemesDirectory: DirectoryProperty
+
+  @get:OutputFile
+  abstract val resPluginXML: RegularFileProperty
+
+  private fun getThemeDefinitionDirectory(): Path {
+    return get(buildSourceAssetDirectory.get().asFile.toString(), "themes")
+  }
 
   companion object {
     private const val COMMUNITY_PLUGIN_ID = "io.acari.DDLCTheme"
@@ -69,32 +97,28 @@ open class BuildThemes : DefaultTask() {
     private const val DOKI_THEME_ULTIMATE = "ultimate"
   }
 
-  private val gson = GsonBuilder()
-    .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
-    .setPrettyPrinting()
-    .create()
-
   init {
     group = "doki"
     description = "Builds all the themes and places them in the proper places"
   }
 
-  private val themeSchema: ThemeDefinitionSchema = getThemeSchema()
-
   private fun getThemeSchema(): ThemeDefinitionSchema =
-    newInputStream(get(getResourcesDirectory().toString(), "theme-schema", "master.theme.schema.json")).use {
+    newInputStream(resMasterThemeSchema.get().asFile.toPath()).use {
       val inputStreamReader: InputStreamReader = InputStreamReader(it, StandardCharsets.UTF_8)
-      val fromJson: ThemeDefinitionSchema = gson.fromJson(
+      val gson = GsonBuilder()
+        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+        .setPrettyPrinting()
+        .create()
+      gson.fromJson(
         inputStreamReader,
         ThemeDefinitionSchema::class.java
       )
-      fromJson
     }
 
   @TaskAction
   fun run() {
-    val buildSourceAssetDirectory = getBuildSourceAssetDirectory()
-    val masterThemesDirectory = get(project.projectDir.toString(), "masterThemes")
+    val buildSourceAssetDirectory = buildSourceAssetDirectory.get().asFile.toPath()
+    val masterThemesDirectory = masterThemesDirectory.get().asFile.toPath()
     val constructableAssetSupplier =
       ConstructableAssetSupplierFactory.createCommonAssetsTemplate(
         buildSourceAssetDirectory,
@@ -106,13 +130,7 @@ open class BuildThemes : DefaultTask() {
     val (pluginXml, parsedPluginXml) = pluginXmlAndParsed
 
     cleanPluginXml(extension)
-    cleanDirectory(
-      get(
-        getResourcesDirectory().toString(),
-        "doki",
-        "themes"
-      )
-    )
+    cleanDirectory(resDokiThemesDirectory.get().asFile.toPath())
 
     val jetbrainsDokiThemeDefinitionDirectory = getThemeDefinitionDirectory()
 
@@ -139,9 +157,6 @@ open class BuildThemes : DefaultTask() {
     writeXmlToFile(pluginXml, parsedPluginXml)
   }
 
-  private fun getThemeDefinitionDirectory() = get(getBuildSourceAssetDirectory().toString(), "themes")
-
-  private fun getBuildSourceAssetDirectory() = get(project.rootDir.absolutePath, "buildSrc", "assets")
 
   private fun writeProductName(pluginXml: Node) {
     val nameNodeList = pluginXml["name"] as NodeList
@@ -190,10 +205,7 @@ open class BuildThemes : DefaultTask() {
       .collect(Collectors.toMap({ it.attribute("name") as String }, { it }, { a, _ -> a }))
 
   private fun getPluginXmlMutationStuff(): Pair<Pair<Path, Node>, Node> {
-    val pluginXml = get(
-      getResourcesDirectory().toString(),
-      "META-INF", "plugin.xml"
-    )
+    val pluginXml = resPluginXML.get().asFile.toPath()
     val parsedPlugin = parseXml(pluginXml)
     return pluginXml to parsedPlugin to (parsedPlugin["extensions"] as NodeList)
       .map { it as Node }
@@ -313,9 +325,13 @@ open class BuildThemes : DefaultTask() {
     return extractResourcesPath(themeJson)
   }
 
-  private fun <T> writeJson(themePath: Path?, themeMap: T) {
+  private fun <T> writeJson(themePath: Path, themeMap: T) {
     newBufferedWriter(themePath, StandardOpenOption.CREATE_NEW)
       .use { writer ->
+        val gson = GsonBuilder()
+          .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+          .setPrettyPrinting()
+          .create()
         gson.toJson(themeMap, writer)
       }
   }
@@ -344,6 +360,7 @@ open class BuildThemes : DefaultTask() {
     masterThemeDefinition: MasterThemeDefinition,
     colorz: Map<String, String>
   ): Map<String, String> {
+    val themeSchema: ThemeDefinitionSchema = getThemeSchema()
     val colorsSchema = themeSchema.properties["colors"]?.required?.toSet()
       ?: throw IllegalStateException("doki.theme.schema.json is missing required attribute 'properties.colors.required'!")
     val missingColors = colorsSchema
@@ -363,7 +380,7 @@ open class BuildThemes : DefaultTask() {
     val stickers = masterThemeDefinition.stickers
     val separator = File.separator
     val stickerDirectory = buildStickerPath(separator, masterThemeDefinition)
-    val localStickerPath = get(getResourcesDirectory().toString(), stickerDirectory)
+    val localStickerPath = get(rootResourcePath.get().asFile.toString(), stickerDirectory)
 
     val defaultStickerPath = get(
       dokiThemeDefinitionPath.parent.toString(),
@@ -454,18 +471,10 @@ open class BuildThemes : DefaultTask() {
     "${separator}stickers${separator}${masterThemeDefinition.usableGroup.lowercase()}${separator}${masterThemeDefinition.usableName}${separator}"
 
   private fun getResourceDirectory(masterThemeDefinition: MasterThemeDefinition): Path = get(
-    getResourcesDirectory().toString(),
-    "doki",
-    "themes",
+    resDokiThemesDirectory.get().asFile.toString(),
     masterThemeDefinition.usableGroup.lowercase()
   )
 
-  private fun getResourcesDirectory(): Path = get(
-    project.getRootDir().toString(),
-    "src",
-    "main",
-    "resources"
-  )
 
   @Suppress("UNCHECKED_CAST")
   private fun getIcons(
