@@ -73,7 +73,7 @@ You can choose themes based on characters from these various Anime, Manga, or Vi
 
 - Manually:
 
-  Download the [latest release](https://github.com/doki-theme/doki-theme-jetbrains/releases/latest) and install it manually using
+  Download the [latest release](https://github.com/ZimCodes/doki-theme-jetbrains/releases/latest) and install it manually using
   <kbd>Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
 
@@ -336,7 +336,7 @@ Some ways to contribute:
 
 ## Changelog
 
-Did you know I keep a changelog?
+Did you know a changelog exists?
 [You can find it here!](./changelog/CHANGELOG.md)
 
 ---
