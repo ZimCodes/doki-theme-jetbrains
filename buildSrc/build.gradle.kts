@@ -1,6 +1,15 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-  kotlin("jvm") version "1.8.10"
+  kotlin("jvm") version "2.3.0-Beta2"
   `kotlin-dsl`
+}
+
+kotlin {
+  jvmToolchain(21)
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_21)
+  }
 }
 
 repositories {

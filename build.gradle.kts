@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   // Custom plugin for building all the themes
   id("doki-theme-plugin")
@@ -12,6 +14,9 @@ version = providers.gradleProperty("pluginVersion").get()
 // Set the JVM language level used to build the project.
 kotlin {
   jvmToolchain(21)
+  compilerOptions{
+    jvmTarget.set(JvmTarget.JVM_21)
+  }
 }
 
 // Configure project's dependencies
