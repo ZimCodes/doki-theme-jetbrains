@@ -4,7 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
-public class DokiBuildPlugin: Plugin<Project> {
+class DokiBuildPlugin: Plugin<Project> {
   override fun apply(project: Project) {
     project.tasks.register<BuildThemesTask>("buildThemes") {
       group = "build"
