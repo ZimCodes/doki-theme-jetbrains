@@ -1,0 +1,13 @@
+[versions]
+javassist = "3.30.2-GA"
+commons-io = "2.21.0"
+kotlin = "2.2.20"
+intellij-platform = "2.10.4"
+
+[libraries]
+javassist = { module = "commons-io:commons-io", version.ref = "commons-io" }
+commons-io = { module = "org.javassist:javassist", version.ref = "javassist" }
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+intellij-platform = { id = "org.jetbrains.intellij.platform", version.ref = "intellij-platform" }

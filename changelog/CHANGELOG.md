@@ -1,6 +1,19 @@
 # Changelog
 ---
-## 2.0.0 - [Build Support 2025.2] 
+
+## [Unreleased]
+
+### Changed
+
+- Miku Theme: `Visual Indent` color now matches `Hard Wrap` color
+
+### Development
+
+- Change multi-project structure: `buildSrc` -> composite builds _(`build-logic`)_
+- Adds build caching support
+
+## 2.0.0 - [Build Support 2025.2]
+
 - Removes error logging
 - Removes test implementations
 - Removes deprecated items
@@ -10,7 +23,8 @@
 - Reduce overall Notifications introduced by plugin
 - Remove New Update notifications by plugin
 - Remove 1st time user notifications
-- Replace option to toggle discreet mode for **all** promotional plugins. Discreet mode setting will toggle for this plugin only.
+- Replace option to toggle discreet mode for **all** promotional plugins. Discreet mode setting will toggle for this
+  plugin only.
 - Remove option to apply theme change animation
 - Removes theme switcher from Doki Settings
 - Replace deprecated `Alarms()` in place of Kotlin coroutines
@@ -21,6 +35,9 @@
 - Increase max heap and metaspace for Gradle project
 - Update README
 - Remove workflow files
-- Fix [Issue #824](https://github.com/doki-theme/doki-theme-jetbrains/issues/824): Text spacing shrinks when zoom is above `100%`
-- Fix [Issue #821](https://github.com/doki-theme/doki-theme-jetbrains/issues/821): Left/Right ToolWindow Toolbar not following current Doki theme.
-- Fix [Issue #819](https://github.com/doki-theme/doki-theme-jetbrains/issues/820): Hatsune Miku theme's Visual Line & Hard wrap guides' color matching the editor background, making it hard to see
+- Fix [Issue #824](https://github.com/doki-theme/doki-theme-jetbrains/issues/824): Text spacing shrinks when zoom is
+  above `100%`
+- Fix [Issue #821](https://github.com/doki-theme/doki-theme-jetbrains/issues/821): Left/Right ToolWindow Toolbar not
+  following current Doki theme.
+- Fix [Issue #819](https://github.com/doki-theme/doki-theme-jetbrains/issues/820): Hatsune Miku theme's Visual Line &
+  Hard wrap guides' color matching the editor background, making it hard to see

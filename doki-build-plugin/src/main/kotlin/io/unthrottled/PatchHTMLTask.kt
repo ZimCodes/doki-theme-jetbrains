@@ -1,5 +1,8 @@
+package io.unthrottled
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jsoup.Jsoup
@@ -9,7 +12,8 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
 
-abstract class PatchHTML : DefaultTask() {
+@CacheableTask
+abstract class PatchHTMLTask : DefaultTask() {
 
   @get:OutputDirectory
   abstract val htmlDirectory: DirectoryProperty

@@ -1,3 +1,5 @@
+package io.unthrottled
+
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import groovy.util.Node
@@ -28,11 +30,14 @@ import io.unthrottled.doki.build.jvm.tools.resolveColor
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.InputStreamReader
@@ -52,6 +57,7 @@ import java.util.LinkedList
 import java.util.Optional
 import java.util.TreeMap
 import java.util.stream.Collectors
+import kotlin.collections.get
 
 data class JetbrainsThemeOnlyDefinition(
   val id: String,
@@ -67,17 +73,21 @@ data class JetbrainsThemeOnlyDefinition(
 
 fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
 
-abstract class BuildThemes : DefaultTask() {
+@CacheableTask
+abstract class BuildThemesTask : DefaultTask() {
   @get:Internal
   abstract val rootResourcePath: DirectoryProperty
 
   @get:InputDirectory
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   abstract val buildSourceAssetDirectory: DirectoryProperty
 
   @get:InputDirectory
+  @get:PathSensitive(PathSensitivity.RELATIVE)
   abstract val masterThemesDirectory: DirectoryProperty
 
   @get:InputFile
+  @get:PathSensitive(PathSensitivity.NAME_ONLY)
   abstract val resMasterThemeSchema: RegularFileProperty
 
   @get:OutputDirectory

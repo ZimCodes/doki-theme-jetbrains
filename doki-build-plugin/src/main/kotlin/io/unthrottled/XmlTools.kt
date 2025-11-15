@@ -1,3 +1,5 @@
+package io.unthrottled
+
 import groovy.util.Node
 import groovy.xml.XmlNodePrinter
 import groovy.xml.XmlParser

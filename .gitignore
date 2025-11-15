@@ -27,4 +27,4 @@ _masterThemes/
 .qodana/
 .intellijPlatform/
 .kotlin
-build-source-jvm/
+doki-build-source-jvm/
