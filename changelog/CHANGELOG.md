@@ -5,7 +5,7 @@
 
 ### Changed
 
-- Miku Theme: `Visual Indent` color now matches `Hard Wrap` color
+- Miku Theme: `Visual Line` color now matches `Hard Wrap` color
 
 ### Development
 
