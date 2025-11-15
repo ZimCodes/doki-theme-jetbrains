@@ -1,3 +1,4 @@
+group = "io.unthrottled.doki.build.plugin"
 plugins {
   `kotlin-dsl`
   `java-gradle-plugin`
@@ -16,8 +17,8 @@ dependencies {
 gradlePlugin {
   plugins {
     create("dokiBuildPlugin") {
-      id = "io.unthrottled.dokibuildplugin"
-      implementationClass = "io.unthrottled.DokiBuildPlugin"
+      id = "io.unthrottled.doki.build.plugin.dokibuildplugin"
+      implementationClass = "io.unthrottled.doki.build.plugin.DokiBuildPlugin"
     }
   }
 }

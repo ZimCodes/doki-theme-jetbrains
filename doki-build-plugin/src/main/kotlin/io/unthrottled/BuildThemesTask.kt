@@ -1,4 +1,4 @@
-package io.unthrottled
+package io.unthrottled.doki.build.plugin
 
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy

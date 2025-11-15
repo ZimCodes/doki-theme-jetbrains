@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
-  id("io.unthrottled.dokibuildplugin")
+  id("io.unthrottled.doki.build.plugin.dokibuildplugin")
   alias(libs.plugins.kotlin)
   id("java") // Java support
   alias(libs.plugins.intellij.platform)
