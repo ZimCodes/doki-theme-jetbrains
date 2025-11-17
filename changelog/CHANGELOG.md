@@ -1,7 +1,7 @@
 # Changelog
 ---
 
-## [Unreleased]
+## 2.0.1 - [Miku: Visual Lines]
 
 ### Changed
 
