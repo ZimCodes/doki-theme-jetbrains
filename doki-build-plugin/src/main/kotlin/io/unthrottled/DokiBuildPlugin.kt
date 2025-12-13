@@ -7,8 +7,6 @@ import org.gradle.kotlin.dsl.register
 class DokiBuildPlugin: Plugin<Project> {
   override fun apply(project: Project) {
     project.tasks.register<BuildThemesTask>("buildThemes") {
-      group = "build"
-      description = "Builds all Doki themes"
       buildSourceAssetDirectory.set(project.layout.projectDirectory.dir("doki-build-plugin/assets"))
       masterThemesDirectory.set(project.layout.projectDirectory.dir("masterThemes"))
       rootResourcePath.set(project.layout.projectDirectory.dir("src/main/resources"))
@@ -18,6 +16,18 @@ class DokiBuildPlugin: Plugin<Project> {
     }
     project.tasks.register<PatchHTMLTask>("patchHTML") {
       htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
+    }
+    project.tasks.register<MultiExecTask>("buildThemeDeps"){
+      val install = "yarn install"
+      commandExecList.set(listOf(
+        "cd doki-build-source",
+        install,
+        "yarn build",
+        "cd ../masterThemes",
+        install,
+        "yarn generateAllJetbrains"
+      ))
+      startDirectory.set(project.layout.projectDirectory)
     }
   }
 

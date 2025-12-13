@@ -28,3 +28,4 @@ _masterThemes/
 .intellijPlatform/
 .kotlin
 doki-build-source-jvm/
+doki-build-source/

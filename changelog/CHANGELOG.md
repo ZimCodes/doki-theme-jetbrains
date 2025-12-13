@@ -1,6 +1,22 @@
 # Changelog
 ---
 
+## 2.1.0 - [Build Support 2025.3]
+
+## Added
+
+- IDE build support for 2025.3
+
+## Updated
+
+- Dependencies
+
+### Development
+
+- Updated gradle: `9.2` -> `9.2.1`
+- New custom task for building dependencies for themes
+- Update local repo dependency sources
+
 ## 2.0.1 - [Miku: Visual Lines]
 
 ### Changed
