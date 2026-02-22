@@ -3,6 +3,7 @@ Doki Theme: Jetbrains IDEs - Maintenance
 
 ![GitHub Release](https://img.shields.io/github/v/release/ZimCodes/doki-theme-jetbrains?display_name=tag&label=Version)
 
+> [!IMPORTANT]
 > ***This repo was created to provide maintenance for the main project
 repo, [Unthrottled / doki-theme-jetbrains](https://github.com/doki-theme/doki-theme-jetbrains), until
 productivity occurs
