@@ -1,6 +1,12 @@
 # Changelog
 ---
 
+## 2.2.0 - [Build Support 2026.1]
+
+## Updated
+- dependencies
+- Upgrade Gradle: `9.2.1` -> `9.4.1`
+
 ## 2.1.0 - [Build Support 2025.3]
 
 ## Added
