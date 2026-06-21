@@ -13,7 +13,6 @@ import io.unthrottled.doki.build.jvm.models.JetbrainsAppDefinition
 import io.unthrottled.doki.build.jvm.models.JetbrainsStickers
 import io.unthrottled.doki.build.jvm.models.JetbrainsThemeDefinition
 import io.unthrottled.doki.build.jvm.models.MasterThemeDefinition
-import io.unthrottled.doki.build.jvm.models.Quad
 import io.unthrottled.doki.build.jvm.models.StringDictionary
 import io.unthrottled.doki.build.jvm.models.ThemeDefinitionSchema
 import io.unthrottled.doki.build.jvm.tools.BuildFunctions
@@ -31,7 +30,9 @@ import io.unthrottled.doki.build.jvm.tools.resolveColor
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
@@ -77,6 +78,8 @@ fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
 
 @CacheableTask
 abstract class BuildThemesTask : DefaultTask() {
+  @get:Input
+  abstract val variantNames: SetProperty<String>
   @get:Internal
   abstract val rootResourcePath: DirectoryProperty
 
@@ -149,28 +152,28 @@ abstract class BuildThemesTask : DefaultTask() {
     // doki-build-plugin/assets/themes directory
     val jetbrainsDokiThemeDefinitionDirectory = getThemeDefinitionDirectory()
 
-
-    CommonConstructionFunctions.getAllDokiThemeDefinitions(
+    val variantNamesSet = variantNames.get()
+    CommonConstructionFunctions.getAllJetbrainsDefinitions(
       DokiProduct.JETBRAINS_THEME,
       jetbrainsDokiThemeDefinitionDirectory,
       masterThemesDirectory,
-      JetbrainsAppDefinition::class.java
+      JetbrainsAppDefinition::class.java,
+      variantNamesSet
     )
       .forEach { pathMasterDefinitionAndJetbrainsDefinition ->
-        val (dokiThemeResourcePath, dokiIslandsResourcePath) = constructIntellijTheme(
+        val variantResourcePaths = constructIntellijTheme(
           pathMasterDefinitionAndJetbrainsDefinition,
           constructableAssetSupplier,
           dokiEditorThemeTemplates
         )
 
-        val themeId = pathMasterDefinitionAndJetbrainsDefinition.second.id
-        addThemeToPluginXml(extension, themeId, dokiThemeResourcePath)
-        val islandsThemeId = pathMasterDefinitionAndJetbrainsDefinition.fourth.id
-        addThemeToPluginXml(extension, islandsThemeId, dokiIslandsResourcePath)
+        variantResourcePaths.forEach { (name, dokiThemeResourcePath) ->
+          val themeId = pathMasterDefinitionAndJetbrainsDefinition.second.id + name
+          addThemeToPluginXml(extension, themeId, dokiThemeResourcePath)
+        }
       }
 
     writeProductName(parsedPluginXml)
-
     writeXmlToFile(pluginXml, parsedPluginXml)
   }
 
@@ -232,184 +235,115 @@ abstract class BuildThemesTask : DefaultTask() {
   }
 
   private fun constructIntellijTheme(
-    pathMasterAndJetbrainsDefinition: Quad<Path, MasterThemeDefinition, JetbrainsAppDefinition, JetbrainsAppDefinition>,
+    pathMasterAndJetbrainsDefinition: Triple<Path, MasterThemeDefinition, Map<String,JetbrainsAppDefinition>>,
     constructableAssetSupplier: ConstructableAssetSupplier,
     dokiEditorThemeTemplates: Map<String, Node>
-  ): Pair<String,String> {
+  ): Map<String, String> {
     val (
       dokiThemeDefinitionPath,
       masterThemeDefinition,
-      jetbrainsDefinition,
-      islandsDefinition,
+      variantDefinitions,
     ) = pathMasterAndJetbrainsDefinition
     val resourceDirectory = getResourceDirectory(masterThemeDefinition)
     if (!exists(resourceDirectory)) {
       createDirectories(resourceDirectory)
     }
 
-    val themeJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}.theme.json")
-    deleteIfExists(themeJson)
+    val resourcePaths = variantDefinitions.entries.associate { (variantName,jetbrainsDefinition) ->
+      val themeJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}${if (variantName == "") "" else ".$variantName"}.theme.json")
+      deleteIfExists(themeJson)
 
-    val islandsThemeJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}.Islands.theme.json")
-    deleteIfExists(islandsThemeJson)
+      val themeMetadataJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}${if (variantName == "") "" else ".$variantName"}.theme.meta.json")
+      deleteIfExists(themeMetadataJson)
 
-    val themeMetadataJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}.theme.meta.json")
-    deleteIfExists(themeMetadataJson)
+      val initialParentTemplateName = if (masterThemeDefinition.dark) "dark" else "light"
+      val constructableLookAndFeel =
+        constructableAssetSupplier.getConstructableAsset(ConstructableTypes.LookAndFeel)
+          .orElseThrow {
+            IllegalStateException("Expected the ${ConstructableTypes.LookAndFeel} template to be present")
+          }
 
-    val islandsThemeMetadataJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}.Islands.theme.meta.json")
-    deleteIfExists(islandsThemeMetadataJson)
+      val dokiColorTemplates =
+        constructableAssetSupplier.getConstructableAsset(ConstructableTypes.Color)
+          .orElseThrow { IllegalStateException("Expected the ${ConstructableTypes.Color} template to be present") }
 
-    val initialParentTemplateName = if (masterThemeDefinition.dark) "dark" else "light"
-    val constructableLookAndFeel =
-      constructableAssetSupplier.getConstructableAsset(ConstructableTypes.LookAndFeel)
-        .orElseThrow {
-          IllegalStateException("Expected the ${ConstructableTypes.LookAndFeel} template to be present")
-        }
+      val resolvedNamedColors =
+        BuildFunctions.resolveTemplateWithCombini(
+          AssetTemplateDefinition(
+            colors = masterThemeDefinition.colors,
+            name = "jetbrains color template",
+            extends = initialParentTemplateName,
+          ),
+          dokiColorTemplates.definitions,
+          { it.colors!! },
+          { it.extends },
+          { parent, child -> combineMaps(parent, child) }
+        )
 
-    val dokiColorTemplates =
-      constructableAssetSupplier.getConstructableAsset(ConstructableTypes.Color)
-        .orElseThrow { IllegalStateException("Expected the ${ConstructableTypes.Color} template to be present") }
-
-    val resolvedNamedColors =
-      BuildFunctions.resolveTemplateWithCombini(
-        AssetTemplateDefinition(
-          colors = masterThemeDefinition.colors,
-          name = "jetbrains color template",
-          extends = initialParentTemplateName,
+      val colors = validateColors(masterThemeDefinition, resolvedNamedColors)
+      val finalTheme = JetbrainsThemeOnlyDefinition(
+        id = masterThemeDefinition.id + variantName,
+        name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
+        dark = masterThemeDefinition.dark,
+        author = masterThemeDefinition.author,
+        parentTheme = jetbrainsDefinition.parentTheme,
+        editorScheme = createEditorScheme(
+          masterThemeDefinition,
+          jetbrainsDefinition,
+          dokiThemeDefinitionPath,
+          dokiEditorThemeTemplates,
+          resolvedNamedColors
         ),
-        dokiColorTemplates.definitions,
-        { it.colors!! },
-        { it.extends },
-        { parent, child -> combineMaps(parent, child) }
+        colors = createColors(
+          colors,
+          masterThemeDefinition,
+        ),
+        ui = getUIDef(
+          jetbrainsDefinition,
+          colors,
+          constructableLookAndFeel,
+          initialParentTemplateName,
+        ),
+        icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
       )
-
-    val colors = validateColors(masterThemeDefinition, resolvedNamedColors)
-    val finalTheme = JetbrainsThemeOnlyDefinition(
-      id = masterThemeDefinition.id,
-      name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
-      dark = masterThemeDefinition.dark,
-      author = masterThemeDefinition.author,
-      parentTheme = jetbrainsDefinition.parentTheme,
-      editorScheme = createEditorScheme(
-        masterThemeDefinition,
-        jetbrainsDefinition,
-        dokiThemeDefinitionPath,
-        dokiEditorThemeTemplates,
-        resolvedNamedColors
-      ),
-      colors = createColors(
-        colors,
-        masterThemeDefinition,
-      ),
-      ui = getUIDef(
-        jetbrainsDefinition,
-        colors,
-        constructableLookAndFeel,
-        initialParentTemplateName,
-      ),
-      icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
-    )
-    val finalIslandsTheme = JetbrainsThemeOnlyDefinition(
-      id = masterThemeDefinition.id + "I",
-      name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
-      dark = masterThemeDefinition.dark,
-      author = masterThemeDefinition.author,
-      parentTheme = islandsDefinition.parentTheme,
-      editorScheme = createEditorScheme(
-        masterThemeDefinition,
-        islandsDefinition,
-        dokiThemeDefinitionPath,
-        dokiEditorThemeTemplates,
-        resolvedNamedColors
-      ),
-      colors = createColors(
-        colors,
-        masterThemeDefinition,
-      ),
-      ui = getUIDef(
-        islandsDefinition,
-        colors,
-        constructableLookAndFeel,
-        initialParentTemplateName,
-      ),
-      icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
-    )
-
-    val fullMetaTheme = JetbrainsThemeDefinition(
-      id = masterThemeDefinition.id,
-      name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
-      displayName = masterThemeDefinition.displayName,
-      dark = masterThemeDefinition.dark,
-      author = masterThemeDefinition.author,
-      parentTheme = jetbrainsDefinition.parentTheme,
-      editorScheme = createEditorScheme(
-        masterThemeDefinition,
-        jetbrainsDefinition,
-        dokiThemeDefinitionPath,
-        dokiEditorThemeTemplates,
-        resolvedNamedColors
-      ),
-      group = masterThemeDefinition.group,
-      stickers = buildJetbrainsStickers(masterThemeDefinition, dokiThemeDefinitionPath),
-      backgrounds = getBackgrounds(
-        masterThemeDefinition,
-        jetbrainsDefinition,
-      ),
-      colors = createColors(
-        colors,
-        masterThemeDefinition,
-      ),
-      ui = getUIDef(
-        jetbrainsDefinition,
-        colors,
-        constructableLookAndFeel,
-        initialParentTemplateName,
-      ),
-      icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
-      meta = masterThemeDefinition.meta ?: Collections.emptyMap()
-    )
-
-    val fullIslandsMetaTheme = JetbrainsThemeDefinition(
-      id = masterThemeDefinition.id + "I",
-      name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
-      displayName = masterThemeDefinition.displayName,
-      dark = masterThemeDefinition.dark,
-      author = masterThemeDefinition.author,
-      parentTheme = islandsDefinition.parentTheme,
-      editorScheme = createEditorScheme(
-        masterThemeDefinition,
-        islandsDefinition,
-        dokiThemeDefinitionPath,
-        dokiEditorThemeTemplates,
-        resolvedNamedColors
-      ),
-      group = masterThemeDefinition.group,
-      stickers = buildJetbrainsStickers(masterThemeDefinition, dokiThemeDefinitionPath),
-      backgrounds = getBackgrounds(
-        masterThemeDefinition,
-        islandsDefinition,
-      ),
-      colors = createColors(
-        colors,
-        masterThemeDefinition,
-      ),
-      ui = getUIDef(
-        islandsDefinition,
-        colors,
-        constructableLookAndFeel,
-        initialParentTemplateName,
-      ),
-      icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
-      meta = masterThemeDefinition.meta ?: Collections.emptyMap()
-    )
-
-
-    writeJson(themeJson, finalTheme)
-    writeJson(themeMetadataJson, fullMetaTheme)
-    writeJson(islandsThemeJson, finalIslandsTheme)
-    writeJson(islandsThemeMetadataJson, fullIslandsMetaTheme)
-
-    return Pair(extractResourcesPath(themeJson), extractResourcesPath(islandsThemeJson))
+      val fullMetaTheme = JetbrainsThemeDefinition(
+        id = masterThemeDefinition.id + variantName,
+        name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
+        displayName = masterThemeDefinition.displayName,
+        dark = masterThemeDefinition.dark,
+        author = masterThemeDefinition.author,
+        parentTheme = jetbrainsDefinition.parentTheme,
+        editorScheme = createEditorScheme(
+          masterThemeDefinition,
+          jetbrainsDefinition,
+          dokiThemeDefinitionPath,
+          dokiEditorThemeTemplates,
+          resolvedNamedColors
+        ),
+        group = masterThemeDefinition.group,
+        stickers = buildJetbrainsStickers(masterThemeDefinition, dokiThemeDefinitionPath),
+        backgrounds = getBackgrounds(
+          masterThemeDefinition,
+          jetbrainsDefinition,
+        ),
+        colors = createColors(
+          colors,
+          masterThemeDefinition,
+        ),
+        ui = getUIDef(
+          jetbrainsDefinition,
+          colors,
+          constructableLookAndFeel,
+          initialParentTemplateName,
+        ),
+        icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
+        meta = masterThemeDefinition.meta ?: Collections.emptyMap()
+      )
+      writeJson(themeJson, finalTheme)
+      writeJson(themeMetadataJson, fullMetaTheme)
+      variantName to extractResourcesPath(themeJson)
+    }
+    return resourcePaths
   }
 
   private fun <T> writeJson(themePath: Path, themeMap: T) {
@@ -639,8 +573,10 @@ abstract class BuildThemesTask : DefaultTask() {
         else -> value
       }
     }
-    .collect(Collectors.toMap({ it.first }, { it.second }, { _, b -> b },
-      { TreeMap(Comparator.comparing { item -> item.lowercase() }) })
+    .collect(
+      Collectors.toMap(
+        { it.first }, { it.second }, { _, b -> b },
+        { TreeMap(Comparator.comparing { item -> item.lowercase() }) })
     )
 
   private fun createEditorScheme(
@@ -716,7 +652,7 @@ abstract class BuildThemesTask : DefaultTask() {
           ) {
             @Suppress("UNCHECKED_CAST")
             val nodeList = currentDude as MutableList<Node>
-            nodeList.sortBy { node -> getComparable(node)}
+            nodeList.sortBy { node -> getComparable(node) }
             queue.addAll(nodeList)
           }
         }
