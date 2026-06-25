@@ -1,10 +1,11 @@
 package io.unthrottled.doki.build.plugin
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
-class DokiBuildPlugin: Plugin<Project> {
+class DokiBuildPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.tasks.register<BuildThemesTask>("buildThemes") {
       // New theme variants must have their id include the variant name.
@@ -19,18 +20,28 @@ class DokiBuildPlugin: Plugin<Project> {
     project.tasks.register<PatchHTMLTask>("patchHTML") {
       htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
     }
-    project.tasks.register<MultiExecTask>("buildThemeDeps"){
+    project.tasks.register<MultiExecTask>("buildThemeDeps") {
+      mustRunAfter("getRepositories")
       val install = "yarn install"
-      commandExecList.set(listOf(
-        "cd doki-build-source",
-        install,
-        "yarn build",
-        "cd ../masterThemes",
-        install,
-        "yarn generateAllJetbrains"
-      ))
-      startDirectory.set(project.layout.projectDirectory)
+      commandExecMap.put(
+        MultiExecTask.OSType.AUTO, listOf(
+          "cd doki-build-source",
+          install,
+          "yarn build",
+          "cd ../masterThemes",
+          install,
+          "yarn generateAllJetbrains"
+        )
+      )
+    }
+    project.tasks.register<MultiExecTask>("getRepositories") {
+      val repoDepFileName = "getRepoDependencies.sh"
+      commandExecMap.put(MultiExecTask.OSType.AUTO,listOf(repoDepFileName))
+    }
+    project.tasks.register<DefaultTask>("initDokiProject") {
+      group = "doki"
+      description = "Gets all necessary repos and build all dependencies, getting the project ready to use."
+      dependsOn("getRepositories","buildThemeDeps")
     }
   }
-
 }
