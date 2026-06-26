@@ -1,0 +1,14 @@
+{
+  "id": "dce48196-ff46-470c-b5f9-d1e23f4a79d3islands",
+  "parentTheme": "Islands Dark",
+  "editorScheme": {
+    "type": "template",
+    "name": "Doki Dim v2"
+  },
+  "overrides": {},
+  "ui": {
+    "Plugins.lightSelectionBackground": "selectionBackground",
+    "CompletionPopup.selectionBackground": "selectionBackground"
+  },
+  "uiBase": "dark dim islands"
+}

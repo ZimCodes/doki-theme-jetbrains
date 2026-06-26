@@ -1,0 +1,18 @@
+{
+  "id": "91415015-8fe3-48eb-9951-70a5cd6cbb7fislands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Natsuki_Light.xml"
+  },
+  "overrides": {},
+  "ui": {
+    "CompletionPopup.selectionForeground": "selectionForeground",
+    "CompletionPopup.selectionBackground": "#fac7db",
+    "CompletionPopup.selectionInactiveBackground": "#fbcee0",
+    "SearchEverywhere.Tab.selectedBackground": "selectionBackground",
+    "SearchEverywhere.Header.background": "headerColor",
+    "SearchEverywhere.SearchField.background": "headerColor"
+  },
+  "uiBase": "light islands"
+}

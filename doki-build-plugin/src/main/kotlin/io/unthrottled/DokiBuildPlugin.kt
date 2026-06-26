@@ -41,8 +41,14 @@ class DokiBuildPlugin : Plugin<Project> {
     }
     project.tasks.register<DefaultTask>("initDokiProject") {
       group = "doki"
-      description = "Gets all necessary repos and build all dependencies, getting the project ready to use."
+      description = "Gets all necessary repos and build their dependencies."
       dependsOn("getRepositories","buildThemeDeps")
+    }
+    project.tasks.register<TemplateVariantBuilder>("genIslandsTemplates") {
+      description = "Generates islands templates of each doki theme using darcula templates as the base."
+      variantName.set("islands")
+      darkParentTheme?.set("Islands Dark")
+      lightParentTheme?.set("Islands Light")
     }
   }
 }

@@ -1,0 +1,11 @@
+{
+  "id": "bc12b380-1f2a-4a9d-89d8-388a07f1e15fislands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Miku.xml"
+  },
+  "overrides": {},
+  "ui": {},
+  "uiBase": "light islands"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "LAF",
+  "name": "dark dim islands",
+  "extends": "dark dim",
+  "ui": {
+    "ToolWindow.background": "headerColor",
+    "ToolWindow.Header.background": "headerColor",
+    "ToolWindow.Header.inactiveBackground": "headerColor",
+    "MainWindow.background": "baseBackground",
+    "Island.borderColor": "headerColor",
+    "EditorTabs.underlinedBorderColor": "accentColor",
+    "EditorTabs.inactiveUnderlinedBorderColor": "accentColorLessTransparent",
+    "EditorTabs.inactiveUnderlinedTabBackground": "highlightColor",
+    "EditorTabs.background": "headerColor"
+  }
+}

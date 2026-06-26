@@ -1,0 +1,11 @@
+{
+  "id": "63fe4617-4cac-47a5-9b93-6794514c35adislands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Megumin.xml"
+  },
+  "overrides": {},
+  "ui": {},
+  "uiBase": "dark dim islands"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "e828aaae-aa8c-4084-8993-d64697146930islands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Emilia_Light.xml"
+  },
+  "overrides": {},
+  "ui": {},
+  "uiBase": "light dim islands"
+}

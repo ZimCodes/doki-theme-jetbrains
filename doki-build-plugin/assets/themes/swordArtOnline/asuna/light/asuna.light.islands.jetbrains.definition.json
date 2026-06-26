@@ -1,0 +1,11 @@
+{
+  "id": "546e8fb8-6082-4ef5-a5e3-44790686f02fislands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Asuna_Light.xml"
+  },
+  "overrides": {},
+  "ui": {},
+  "uiBase": "light dim islands"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "dfd05a73-c189-4622-87c7-573fbb3a46b9islands",
+  "parentTheme": "Islands Dark",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Hanekawa_Dark.xml"
+  },
+  "overrides": {},
+  "ui": {
+    "CompletionPopup.matchForeground": "accentColorBrighter"
+  },
+  "uiBase": "dark islands"
+}

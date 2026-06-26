@@ -1,0 +1,11 @@
+{
+  "id": "325c5d4d-5614-4c58-b296-18924f2f6928islands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "template",
+    "name": "Doki Dim Light"
+  },
+  "overrides": {},
+  "ui": {},
+  "uiBase": "light dim islands"
+}

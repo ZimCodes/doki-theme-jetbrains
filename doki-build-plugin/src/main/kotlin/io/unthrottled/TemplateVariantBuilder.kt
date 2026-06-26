@@ -4,12 +4,8 @@ import io.unthrottled.doki.build.jvm.models.DokiThemeTemplate
 import io.unthrottled.doki.build.jvm.tools.CommonConstructionFunctions
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -17,9 +13,9 @@ import java.util.regex.Pattern
 import kotlin.streams.asSequence
 
 abstract class TemplateVariantBuilder : DefaultTask() {
-
   init {
-    // Runs this task every time. No skipping!
+    group = "doki"
+    // Runs this task every time.
     outputs.upToDateWhen { false }
     dokiThemeDirectory.convention(project.layout.projectDirectory.dir("doki-build-plugin/assets/themes"))
   }
@@ -29,37 +25,60 @@ abstract class TemplateVariantBuilder : DefaultTask() {
   abstract val dokiThemeDirectory: DirectoryProperty
 
   @get:Input
-  abstract val jsonItems: MapProperty<String, Any>
+  abstract val darkParentTheme: Property<String>?
+
+  @get:Input
+  abstract val lightParentTheme: Property<String>?
 
   @get:Input
   abstract val variantName: Property<String>
 
-  fun jsonTemplates(): List<DokiThemeTemplate> {
+  @TaskAction
+  fun run() {
     val templatePath = dokiThemeDirectory.asFile.get().toPath()
-    val jsonTemps = baseJSONTemplates(templatePath, variantName.get())
+    val jsonTemps = baseJSONTemplates(templatePath)
     val variantJSONTemps = renamePathToVariant(jsonTemps)
-    val modifiedVariantTemps = addItemsToTemplate(variantJSONTemps)
+    val modifiedVariantTemps = updateTemplates(variantJSONTemps)
     writeToJSON(modifiedVariantTemps)
   }
 
-  fun addItemsToTemplate(jsonVariantTemplates: Map<Path, DokiThemeTemplate>): Map<Path, DokiThemeTemplate> =
+  /*
+  * Updates the JSON templates with variant specific details.
+  * */
+  fun updateTemplates(jsonVariantTemplates: Map<Path, DokiThemeTemplate>): Map<Path, DokiThemeTemplate> =
     jsonVariantTemplates.map { (path, template) ->
+      val isDark = path.fileName.toString().contains("dark")
       path to DokiThemeTemplate(
         id = template.id + variantName.get(),
-        parentTheme = jsonItems.get()["parentTheme"] as? String? ?: template.parentTheme,
+        parentTheme = getParentTheme(isDark),
         editorScheme = template.editorScheme,
         overrides = template.overrides,
         ui = template.ui,
-        uiBase = getUIBase(path, template.uiBase)
+        uiBase = getUIBase(template.uiBase, isDark)
       )
     }.toMap()
 
-  fun getUIBase(path: Path, templateUIBase: String?): String {
-    // TODO: return the islands version of the uibase.
+  /*
+  * Gets the correct parentTheme based on light/dark theme type.
+  * */
+  fun getParentTheme(isDark: Boolean): String? {
+    return if (isDark) darkParentTheme?.get() else lightParentTheme?.get()
   }
 
+  /*
+  * Gets the uibase specifically designed for the variant.
+  * */
+  fun getUIBase(templateUIBase: String?, isDark: Boolean): String =
+    if (templateUIBase == null) uibaseFromName(isDark) else "$templateUIBase ${variantName.get()}"
+
+  /*
+  * Gets the uibase value from the file name.
+  * */
+  fun uibaseFromName(isDark: Boolean): String =
+    if (isDark) "dark ${variantName.get()}" else "light ${variantName.get()}"
+
   fun writeToJSON(jsonVariantTemplates: Map<Path, DokiThemeTemplate>) {
-    jsonVariantTemplates.forEach { path, template ->
+    jsonVariantTemplates.forEach { (path, template) ->
       Files.newBufferedWriter(
         path, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
         StandardOpenOption.CREATE
@@ -68,7 +87,11 @@ abstract class TemplateVariantBuilder : DefaultTask() {
       }
     }
   }
-
+/*
+* Rename file names to include the name of the variant.
+*
+* Example: my.theme.dark.<variant-name>.jetbrains.definition.jsono
+* */
   fun renamePathToVariant(dokiTemplate: Map<Path, DokiThemeTemplate>): Map<Path, DokiThemeTemplate> =
     dokiTemplate.mapKeys { (path, _) ->
       val fileName = path.fileName.toString()
@@ -84,9 +107,10 @@ abstract class TemplateVariantBuilder : DefaultTask() {
   /*
   * Gets the JSON format of each doki theme darcula template
   * */
-  fun baseJSONTemplates(templatePath: Path, variantName: String): Map<Path, DokiThemeTemplate> =
+  fun baseJSONTemplates(templatePath: Path): Map<Path, DokiThemeTemplate> =
     Files.walk(templatePath).filter {
-      Files.isRegularFile(it) && !it.fileName.toString().contains(variantName)
+      val fileName = it.fileName.toString()
+      Files.isRegularFile(it) && fileName.endsWith("json") && !fileName.contains(variantName.get())
     }.asSequence().associateWith { path ->
       Files.newBufferedReader(path).use { reader ->
         CommonConstructionFunctions.gson.fromJson(reader, DokiThemeTemplate::class.java)

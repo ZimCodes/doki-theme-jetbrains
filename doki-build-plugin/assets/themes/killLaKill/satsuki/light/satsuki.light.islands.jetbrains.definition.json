@@ -1,0 +1,13 @@
+{
+  "id": "3a78b13e-dbf2-410f-bb20-12b57bff7735islands",
+  "parentTheme": "Islands Light",
+  "editorScheme": {
+    "type": "templateExtension",
+    "file": "Satsuki.xml"
+  },
+  "overrides": {},
+  "ui": {
+    "CompletionPopup.matchForeground": "keywordColor"
+  },
+  "uiBase": "light islands"
+}

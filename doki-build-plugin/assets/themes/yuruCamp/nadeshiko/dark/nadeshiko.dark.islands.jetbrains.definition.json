@@ -1,0 +1,11 @@
+{
+  "id": "d587f5ab-9334-4b7b-a99e-58461719d87bislands",
+  "parentTheme": "Islands Dark",
+  "editorScheme": {
+    "type": "template",
+    "name": "Doki Dim"
+  },
+  "overrides": {},
+  "ui": {},
+  "uiBase": "dark islands"
+}
