@@ -120,11 +120,7 @@ abstract class BuildThemesTask : DefaultTask() {
   private fun getThemeSchema(): ThemeDefinitionSchema =
     newInputStream(resMasterThemeSchema.get().asFile.toPath()).use {
       val inputStreamReader: InputStreamReader = InputStreamReader(it, StandardCharsets.UTF_8)
-      val gson = GsonBuilder()
-        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
-        .setPrettyPrinting()
-        .create()
-      gson.fromJson(
+      CommonConstructionFunctions.gson.fromJson(
         inputStreamReader,
         ThemeDefinitionSchema::class.java
       )
@@ -349,11 +345,7 @@ abstract class BuildThemesTask : DefaultTask() {
   private fun <T> writeJson(themePath: Path, themeMap: T) {
     newBufferedWriter(themePath, StandardOpenOption.CREATE_NEW)
       .use { writer ->
-        val gson = GsonBuilder()
-          .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
-          .setPrettyPrinting()
-          .create()
-        gson.toJson(themeMap, writer)
+        CommonConstructionFunctions.gson.toJson(themeMap, writer)
       }
   }
 

@@ -3,7 +3,6 @@ package io.unthrottled.doki.build.plugin
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
@@ -41,8 +40,8 @@ abstract class MultiExecTask : Exec() {
       commandLine("cmd", "/c", joinedCmds)
     } else {
       commandLine("sh", "-c", "'$joinedCmds'")
-      super.exec()
     }
+    super.exec()
   }
 
   fun joinedCommands(isWindows: Boolean, cmdMap: Map<OSType,List<String>>): String{

@@ -21,7 +21,7 @@ class DokiBuildPlugin : Plugin<Project> {
       htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
     }
     project.tasks.register<MultiExecTask>("buildThemeDeps") {
-      mustRunAfter("getRepositories")
+      mustRunAfter("getRepos")
       val install = "yarn install"
       commandExecMap.put(
         MultiExecTask.OSType.AUTO, listOf(
@@ -34,9 +34,10 @@ class DokiBuildPlugin : Plugin<Project> {
         )
       )
     }
-    project.tasks.register<MultiExecTask>("getRepositories") {
-      val repoDepFileName = "getRepoDependencies.sh"
-      commandExecMap.put(MultiExecTask.OSType.AUTO,listOf(repoDepFileName))
+    project.tasks.register<MultiExecTask>("getRepos") {
+      description = "Retrieves all repositories doki-theme-jetbrains relies on."
+      val command = "getRepoDependencies.sh"
+      commandExecMap.put(MultiExecTask.OSType.AUTO,listOf(command))
     }
     project.tasks.register<DefaultTask>("initDokiProject") {
       group = "doki"
