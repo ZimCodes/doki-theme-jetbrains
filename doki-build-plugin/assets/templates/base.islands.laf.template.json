@@ -1,7 +1,6 @@
 {
   "type": "LAF",
-  "extends": "light dim",
-  "name": "light dim islands",
+  "name": "base islands",
   "ui": {
     "ToolWindow.background": "headerColor",
     "ToolWindow.Header.background": "headerColor",

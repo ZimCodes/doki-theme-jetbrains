@@ -1,119 +1,135 @@
 package io.unthrottled.doki.build.plugin
 
-import io.unthrottled.doki.build.jvm.models.DokiThemeTemplate
+import io.unthrottled.doki.build.jvm.models.AssetTemplateDefinition
 import io.unthrottled.doki.build.jvm.tools.CommonConstructionFunctions
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.TaskAction
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
-import java.util.regex.Pattern
-import kotlin.streams.asSequence
 
 abstract class TemplateVariantBuilder : DefaultTask() {
   init {
     group = "doki"
     // Runs this task every time.
     outputs.upToDateWhen { false }
-    dokiThemeDirectory.convention(project.layout.projectDirectory.dir("doki-build-plugin/assets/themes"))
+    includeTemplates.convention(setOf("dark", "dark dim", "light", "light dim"))
+    assetsTemplatesDirectory.convention(project.layout.projectDirectory.dir("doki-build-plugin/assets/templates"))
   }
 
   @get:InputDirectory
-  @get:PathSensitive(PathSensitivity.RELATIVE)
-  abstract val dokiThemeDirectory: DirectoryProperty
-
-  @get:Input
-  abstract val darkParentTheme: Property<String>?
-
-  @get:Input
-  abstract val lightParentTheme: Property<String>?
+  abstract val assetsTemplatesDirectory: DirectoryProperty
 
   @get:Input
   abstract val variantName: Property<String>
 
+  @get:Input
+  abstract val includeTemplates: SetProperty<String>
+
   @TaskAction
   fun run() {
-    val templatePath = dokiThemeDirectory.asFile.get().toPath()
-    val jsonTemps = baseJSONTemplates(templatePath)
-    val variantJSONTemps = renamePathToVariant(jsonTemps)
-    val modifiedVariantTemps = updateTemplates(variantJSONTemps)
-    writeToJSON(modifiedVariantTemps)
+    val variantName = variantName.get()
+    val includeTemplates = laFFileSuffix(includeTemplates.get())
+    val templateDirectory = assetsTemplatesDirectory.get().asFile.toPath()
+    val templatePaths = templatePaths(templateDirectory, includeTemplates, variantName)
+    val templateJSONs = templateJSONs(templatePaths)
+    val baseVariantTemplatePath = baseVariantTemplate(templateDirectory, variantName)
+    val baseVariantJSON = baseVariantJSON(baseVariantTemplatePath)
+    val modifiedJSONTemplates = mergeVariantToTemplates(templateJSONs, baseVariantJSON,variantName)
+    val variantTemplates = changeFileNames(modifiedJSONTemplates, variantName)
+    writeToJson(variantTemplates)
   }
 
   /*
-  * Updates the JSON templates with variant specific details.
+  * Creates a file variant for each template type
   * */
-  fun updateTemplates(jsonVariantTemplates: Map<Path, DokiThemeTemplate>): Map<Path, DokiThemeTemplate> =
-    jsonVariantTemplates.map { (path, template) ->
-      val isDark = path.fileName.toString().contains("dark")
-      path to DokiThemeTemplate(
-        id = template.id + variantName.get(),
-        parentTheme = getParentTheme(isDark),
-        editorScheme = template.editorScheme,
-        overrides = template.overrides,
-        ui = template.ui,
-        uiBase = getUIBase(template.uiBase, isDark)
-      )
-    }.toMap()
-
-  /*
-  * Gets the correct parentTheme based on light/dark theme type.
-  * */
-  fun getParentTheme(isDark: Boolean): String? {
-    return if (isDark) darkParentTheme?.get() else lightParentTheme?.get()
-  }
-
-  /*
-  * Gets the uibase specifically designed for the variant.
-  * */
-  fun getUIBase(templateUIBase: String?, isDark: Boolean): String =
-    if (templateUIBase == null) uibaseFromName(isDark) else "$templateUIBase ${variantName.get()}"
-
-  /*
-  * Gets the uibase value from the file name.
-  * */
-  fun uibaseFromName(isDark: Boolean): String =
-    if (isDark) "dark ${variantName.get()}" else "light ${variantName.get()}"
-
-  fun writeToJSON(jsonVariantTemplates: Map<Path, DokiThemeTemplate>) {
-    jsonVariantTemplates.forEach { (path, template) ->
+  private fun writeToJson(variantTemplates: Map<Path, AssetTemplateDefinition>) =
+    variantTemplates.forEach { (path, template) ->
       Files.newBufferedWriter(
-        path, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
-        StandardOpenOption.CREATE
+        path, StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE
       ).use { writer ->
         CommonConstructionFunctions.gson.toJson(template, writer)
       }
     }
-  }
-/*
-* Rename file names to include the name of the variant.
-*
-* Example: my.theme.dark.<variant-name>.jetbrains.definition.jsono
-* */
-  fun renamePathToVariant(dokiTemplate: Map<Path, DokiThemeTemplate>): Map<Path, DokiThemeTemplate> =
-    dokiTemplate.mapKeys { (path, _) ->
+
+  /*
+  * Changes the file names to include the variant name. Ex: doki.dark.<variant>.laf.template.json
+  * */
+  private fun changeFileNames(
+    modifiedTemplates: Map<Path, AssetTemplateDefinition>,
+    variantName: String
+  ): Map<Path, AssetTemplateDefinition> =
+    modifiedTemplates.mapKeys { (path, _) ->
       val fileName = path.fileName.toString()
-      val separator = Pattern.compile("[.]")
-      val nameSplit = fileName.split(separator)
-      val startSplit = nameSplit.takeWhile { it != "jetbrains" }
+      val nameSplit = fileName.split("[.]".toPattern())
+      val startSplit = nameSplit.takeWhile { it != "laf" }
       val endSplit = nameSplit.takeLast(3)
-      val nameVariantSplit = startSplit + variantName.get() + endSplit
-      val variantFileName = nameVariantSplit.joinToString(".")
-      path.resolveSibling(variantFileName)
+      val newNameSplit = startSplit + variantName + endSplit
+      val newName = newNameSplit.joinToString(".")
+      path.resolveSibling(newName)
+    }
+
+  private fun mergeVariantToTemplates(
+    templateJSONs: Map<Path, AssetTemplateDefinition>,
+    variantJSON: AssetTemplateDefinition,
+    variantName: String
+  ): Map<Path, AssetTemplateDefinition> =
+    templateJSONs.mapValues { (_, template) ->
+      AssetTemplateDefinition(
+        type = variantJSON.type ?: template.type,
+        name = "${template.name} $variantName",
+        extends = template.name,
+        ui = variantJSON.ui,
+        colors = variantJSON.colors
+      )
     }
 
   /*
-  * Gets the JSON format of each doki theme darcula template
+  * Transforms LaF templates into a JSON data class
   * */
-  fun baseJSONTemplates(templatePath: Path): Map<Path, DokiThemeTemplate> =
-    Files.walk(templatePath).filter {
-      val fileName = it.fileName.toString()
-      Files.isRegularFile(it) && fileName.endsWith("json") && !fileName.contains(variantName.get())
-    }.asSequence().associateWith { path ->
-      Files.newBufferedReader(path).use { reader ->
-        CommonConstructionFunctions.gson.fromJson(reader, DokiThemeTemplate::class.java)
+  private fun templateJSONs(templatePaths: List<Path>): Map<Path, AssetTemplateDefinition> =
+    templatePaths.associateWith { templatePath ->
+      Files.newBufferedReader(templatePath).use { reader ->
+        CommonConstructionFunctions.gson.fromJson(
+          reader,
+          AssetTemplateDefinition::class.java
+        )
       }
     }
+
+  /*
+  * Transforms base.<variant-name> template into a JSON data class
+  * */
+  private fun baseVariantJSON(baseVariantTemplatePath: Path): AssetTemplateDefinition =
+    Files.newBufferedReader(baseVariantTemplatePath).use { reader ->
+      CommonConstructionFunctions.gson.fromJson(reader, AssetTemplateDefinition::class.java)
+    }
+
+  /*
+  * Gets the base.<variant-name> template path
+  * */
+  private fun baseVariantTemplate(templateDirectory: Path, variantName: String): Path =
+    Files.walk(templateDirectory).filter {  Files.isRegularFile(it) && it.fileName.toString().startsWith("base.$variantName") }.findFirst().orElse(null)
+      ?: throw IllegalArgumentException("Cannot find 'base.$variantName.laf.template.json' in 'assets/templates'. This file must contain variant specific theme keys.")
+
+  /*
+  * Adds 'laf.template.json' suffix to all valid templates
+  * */
+  private fun laFFileSuffix(includeSet: Set<String>): Set<String> =
+    includeSet.map { "${it.replace(' ', '.')}.laf.template.json" }.toSet()
+
+  /*
+  * Gets all templates excluding base.<variant-name>
+  */
+  private fun templatePaths(templateDirPath: Path, includeTemplates: Set<String>, variantName: String): List<Path> =
+    Files.walk(templateDirPath).filter {
+      val fileName = it.fileName.toString()
+      fileName.endsWith("json") && fileName in includeTemplates && !fileName.contains(".$variantName")
+    }.toList()
 }

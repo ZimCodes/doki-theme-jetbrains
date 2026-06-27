@@ -14,6 +14,7 @@
         "os.mac": "selectionForeground"
       }
     },
+    "AlertDialog.background": "baseBackground",
     "TitlePane.background": "baseBackground",
     "Panel.background": "baseBackground",
     "ToolWindow.background": "baseBackground",
@@ -352,6 +353,9 @@
     "ScrollBar.track": "ghostColor",
     "ScrollBar.Transparent.trackColor": "ghostColor",
     "ScrollBar.Transparent.hoverTrackColor": "ghostColor",
+    "Scrollbar.Tabs.TransparentThumbColor": "accentColorTransparent",
+    "Scrollbar.Tabs.ThumbColor": "accentColorTransparent",
+    "Scrollbar.Tabs.HoveredThumbColor": "accentColorLessTransparent",
     "ScrollBar.Mac.Transparent.thumbColor": "accentColorTransparent",
     "ScrollBar.Mac.Transparent.thumbBorderColor": "accentColorTransparent",
     "ScrollBar.Mac.Transparent.hoverThumbColor": "accentColorLessTransparent",

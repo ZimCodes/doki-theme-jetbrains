@@ -37,18 +37,23 @@ class DokiBuildPlugin : Plugin<Project> {
     project.tasks.register<MultiExecTask>("getRepos") {
       description = "Retrieves all repositories doki-theme-jetbrains relies on."
       val command = "getRepoDependencies.sh"
-      commandExecMap.put(MultiExecTask.OSType.AUTO,listOf(command))
+      commandExecMap.put(MultiExecTask.OSType.AUTO, listOf(command))
     }
     project.tasks.register<DefaultTask>("initDokiProject") {
       group = "doki"
       description = "Gets all necessary repos and build their dependencies."
-      dependsOn("getRepositories","buildThemeDeps")
+      dependsOn("getRepositories", "buildThemeDeps")
     }
-    project.tasks.register<TemplateVariantBuilder>("genIslandsTemplates") {
+    project.tasks.register<ThemeVariantBuilder>("genIslandsTemplates") {
+      dependsOn("genIslandsBaseTemplates")
       description = "Generates islands templates of each doki theme using darcula templates as the base."
       variantName.set("islands")
       darkParentTheme?.set("Islands Dark")
       lightParentTheme?.set("Islands Light")
+    }
+    project.tasks.register<TemplateVariantBuilder>("genIslandsBaseTemplates") {
+      description = "Generates base starter templates for islands variant."
+      variantName.set("islands")
     }
   }
 }

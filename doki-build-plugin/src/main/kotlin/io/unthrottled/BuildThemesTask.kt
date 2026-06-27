@@ -80,6 +80,7 @@ fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
 abstract class BuildThemesTask : DefaultTask() {
   @get:Input
   abstract val variantNames: SetProperty<String>
+
   @get:Internal
   abstract val rootResourcePath: DirectoryProperty
 
@@ -231,7 +232,7 @@ abstract class BuildThemesTask : DefaultTask() {
   }
 
   private fun constructIntellijTheme(
-    pathMasterAndJetbrainsDefinition: Triple<Path, MasterThemeDefinition, Map<String,JetbrainsAppDefinition>>,
+    pathMasterAndJetbrainsDefinition: Triple<Path, MasterThemeDefinition, Map<String, JetbrainsAppDefinition>>,
     constructableAssetSupplier: ConstructableAssetSupplier,
     dokiEditorThemeTemplates: Map<String, Node>
   ): Map<String, String> {
@@ -245,11 +246,17 @@ abstract class BuildThemesTask : DefaultTask() {
       createDirectories(resourceDirectory)
     }
 
-    val resourcePaths = variantDefinitions.entries.associate { (variantName,jetbrainsDefinition) ->
-      val themeJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}${if (variantName == "") "" else ".$variantName"}.theme.json")
+    val resourcePaths = variantDefinitions.entries.associate { (variantName, jetbrainsDefinition) ->
+      val themeJson = get(
+        resourceDirectory.toString(),
+        "${masterThemeDefinition.usableName}${if (variantName == "") "" else ".$variantName"}.theme.json"
+      )
       deleteIfExists(themeJson)
 
-      val themeMetadataJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}${if (variantName == "") "" else ".$variantName"}.theme.meta.json")
+      val themeMetadataJson = get(
+        resourceDirectory.toString(),
+        "${masterThemeDefinition.usableName}${if (variantName == "") "" else ".$variantName"}.theme.meta.json"
+      )
       deleteIfExists(themeMetadataJson)
 
       val initialParentTemplateName = if (masterThemeDefinition.dark) "dark" else "light"
@@ -277,9 +284,11 @@ abstract class BuildThemesTask : DefaultTask() {
         )
 
       val colors = validateColors(masterThemeDefinition, resolvedNamedColors)
+      val themeName =
+        "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}${if (variantName == "") "" else " ${variantName.replaceFirstChar {it.titlecaseChar()}}"}"
       val finalTheme = JetbrainsThemeOnlyDefinition(
         id = masterThemeDefinition.id + variantName,
-        name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
+        name = themeName,
         dark = masterThemeDefinition.dark,
         author = masterThemeDefinition.author,
         parentTheme = jetbrainsDefinition.parentTheme,
@@ -304,7 +313,7 @@ abstract class BuildThemesTask : DefaultTask() {
       )
       val fullMetaTheme = JetbrainsThemeDefinition(
         id = masterThemeDefinition.id + variantName,
-        name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
+        name = themeName,
         displayName = masterThemeDefinition.displayName,
         dark = masterThemeDefinition.dark,
         author = masterThemeDefinition.author,
