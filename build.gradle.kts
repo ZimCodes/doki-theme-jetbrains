@@ -86,7 +86,4 @@ tasks {
   patchPluginXml {
     dependsOn("buildThemes")
   }
-//  publishPlugin {
-//    dependsOn(patchChangelog)
-//  }
 }
