@@ -36,7 +36,7 @@ abstract class TemplateVariantBuilder : DefaultTask() {
     val variantName = variantName.get()
     val includeTemplates = laFFileSuffix(includeTemplates.get())
     val templateDirectory = assetsTemplatesDirectory.get().asFile.toPath()
-    val templatePaths = templatePaths(templateDirectory, includeTemplates, variantName)
+    val templatePaths = templatePaths(templateDirectory, includeTemplates)
     val templateJSONs = templateJSONs(templatePaths)
     val baseVariantTemplatePath = baseVariantTemplate(templateDirectory, variantName)
     val baseVariantJSON = baseVariantJSON(baseVariantTemplatePath)
@@ -127,9 +127,9 @@ abstract class TemplateVariantBuilder : DefaultTask() {
   /*
   * Gets all templates excluding base.<variant-name>
   */
-  private fun templatePaths(templateDirPath: Path, includeTemplates: Set<String>, variantName: String): List<Path> =
+  private fun templatePaths(templateDirPath: Path, includeTemplates: Set<String>): List<Path> =
     Files.walk(templateDirPath).filter {
       val fileName = it.fileName.toString()
-      fileName.endsWith("json") && fileName in includeTemplates && !fileName.contains(".$variantName")
+      fileName.endsWith("json") && fileName in includeTemplates && ThemeVariant.entries.any{ themeVariant -> !fileName.contains(".${themeVariant.lowercase}") }
     }.toList()
 }

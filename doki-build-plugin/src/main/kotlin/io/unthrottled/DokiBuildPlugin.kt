@@ -4,21 +4,51 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
-
+enum class ThemeVariant {
+  DARCULA,ISLANDS;
+  val lowercase : String
+    get() = this.name.lowercase()
+}
 class DokiBuildPlugin : Plugin<Project> {
   override fun apply(project: Project) {
+    val variant: String = project.findProperty("variant") as String? ?: ThemeVariant.DARCULA.lowercase
+    project.tasks.register<PatchHTMLTask>("patchHTML") {
+      htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
+    }
     project.tasks.register<BuildThemesTask>("buildThemes") {
-      // New theme variants must have their id include the variant name.
-      variantNames.addAll("", "islands")
+      variantName.set(variant)
       buildSourceAssetDirectory.set(project.layout.projectDirectory.dir("doki-build-plugin/assets"))
       masterThemesDirectory.set(project.layout.projectDirectory.dir("masterThemes"))
       rootResourcePath.set(project.layout.projectDirectory.dir("src/main/resources"))
       resMasterThemeSchema.set(rootResourcePath.file("theme-schema/master.theme.schema.json"))
       resDokiThemesDirectory.set(rootResourcePath.dir("doki/themes"))
       resPluginXML.set(rootResourcePath.file("META-INF/plugin.xml"))
+      templatePluginXML.set(buildSourceAssetDirectory.file("plugin.xml"))
     }
-    project.tasks.register<PatchHTMLTask>("patchHTML") {
-      htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
+    // NOTE: To generate a variant: gradlew genTemplates -Pvariant=islands
+    project.tasks.register<ThemeVariantBuilder>("genVariantTemplates") {
+      if (!project.hasProperty("variant") || variant == ThemeVariant.DARCULA.lowercase) {
+        throw IllegalArgumentException("You have must specify a non-darcula variant: '--project-prop=<variant>'")
+      }
+      dependsOn("genVariantBaseTemplates")
+      description = "Generates variant templates of each doki theme using darcula templates as the base."
+      variantName.set(variant)
+      val capitalName: String = variant.replaceFirstChar { it.titlecaseChar() }
+      darkParentTheme?.set("$capitalName Dark")
+      lightParentTheme?.set("$capitalName Light")
+    }
+    // NOTE: To generate a variant: gradlew genVariantBaseTemplates -Pvariant=islands
+    project.tasks.register<TemplateVariantBuilder>("genVariantBaseTemplates") {
+      if (!project.hasProperty("variant") || variant == ThemeVariant.DARCULA.lowercase) {
+        throw IllegalArgumentException("You have must specify a non-darcula variant: '--project-prop=<variant>'")
+      }
+      description = "Generates base starter templates for a variant using darcula's base templates as a guide."
+      variantName.set(variant)
+    }
+    project.tasks.register<DefaultTask>("initDokiProject") {
+      group = "doki"
+      description = "Gets all necessary repos and build their dependencies."
+      dependsOn( "buildThemeDeps")
     }
     project.tasks.register<MultiExecTask>("buildThemeDeps") {
       mustRunAfter("getRepos")
@@ -38,22 +68,6 @@ class DokiBuildPlugin : Plugin<Project> {
       description = "Retrieves all repositories doki-theme-jetbrains relies on."
       val command = "getRepoDependencies.sh"
       commandExecMap.put(MultiExecTask.OSType.AUTO, listOf(command))
-    }
-    project.tasks.register<DefaultTask>("initDokiProject") {
-      group = "doki"
-      description = "Gets all necessary repos and build their dependencies."
-      dependsOn("getRepositories", "buildThemeDeps")
-    }
-    project.tasks.register<ThemeVariantBuilder>("genIslandsTemplates") {
-      dependsOn("genIslandsBaseTemplates")
-      description = "Generates islands templates of each doki theme using darcula templates as the base."
-      variantName.set("islands")
-      darkParentTheme?.set("Islands Dark")
-      lightParentTheme?.set("Islands Light")
-    }
-    project.tasks.register<TemplateVariantBuilder>("genIslandsBaseTemplates") {
-      description = "Generates base starter templates for islands variant."
-      variantName.set("islands")
     }
   }
 }

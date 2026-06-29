@@ -37,7 +37,7 @@ abstract class ThemeVariantBuilder : DefaultTask() {
   fun run() {
     val templatePath = dokiThemeDirectory.asFile.get().toPath()
     val variantName = variantName.get()
-    val jsonTemps = baseJSONTemplates(templatePath, variantName)
+    val jsonTemps = baseJSONTemplates(templatePath)
     val variantJSONTemps = renamePathToVariant(jsonTemps, variantName)
     val modifiedVariantTemps = updateTemplates(variantJSONTemps, variantName)
     writeToJSON(modifiedVariantTemps)
@@ -50,7 +50,8 @@ abstract class ThemeVariantBuilder : DefaultTask() {
     jsonVariantTemplates: Map<Path, DokiThemeTemplate>,
     variantName: String
   ): Map<Path, DokiThemeTemplate> =
-    jsonVariantTemplates.map { (path, template) ->
+    jsonVariantTemplates.filter { (_, template) -> template.id.endsWith(variantName) }
+      .map { (path, template) ->
       val isDark = path.fileName.toString().contains("dark")
       path to DokiThemeTemplate(
         id = template.id + variantName,
@@ -103,22 +104,17 @@ abstract class ThemeVariantBuilder : DefaultTask() {
   ): Map<Path, DokiThemeTemplate> =
     dokiTemplate.mapKeys { (path, _) ->
       val fileName = path.fileName.toString()
-      val separator = Pattern.compile("[.]")
-      val nameSplit = fileName.split(separator)
-      val startSplit = nameSplit.takeWhile { it != "jetbrains" }
-      val endSplit = nameSplit.takeLast(3)
-      val nameVariantSplit = startSplit + variantName + endSplit
-      val variantFileName = nameVariantSplit.joinToString(".")
+      val variantFileName = fileName.replace(ThemeVariant.DARCULA.lowercase,variantName)
       path.resolveSibling(variantFileName)
     }
 
   /*
   * Gets the JSON format of each doki theme darcula template
   * */
-  fun baseJSONTemplates(templatePath: Path, variantName: String): Map<Path, DokiThemeTemplate> =
+  fun baseJSONTemplates(templatePath: Path): Map<Path, DokiThemeTemplate> =
     Files.walk(templatePath).filter {
       val fileName = it.fileName.toString()
-      Files.isRegularFile(it) && fileName.endsWith("json") && !fileName.contains(variantName)
+      Files.isRegularFile(it) && fileName.endsWith("json") && fileName.contains(ThemeVariant.DARCULA.lowercase)
     }.asSequence().associateWith { path ->
       Files.newBufferedReader(path).use { reader ->
         CommonConstructionFunctions.gson.fromJson(reader, DokiThemeTemplate::class.java)

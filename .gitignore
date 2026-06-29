@@ -29,3 +29,9 @@ _masterThemes/
 .kotlin
 doki-build-source-jvm/
 doki-build-source/
+
+# Generated doki theme variant templates
+doki-build-plugin/assets/themes/**/*.islands*.json
+
+# Generated base templates
+doki-build-plugin/assets/templates/*.islands*.json
