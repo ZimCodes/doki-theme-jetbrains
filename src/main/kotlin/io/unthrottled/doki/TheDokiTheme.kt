@@ -29,6 +29,8 @@ import java.util.UUID
 
 @Service
 class TheDokiTheme : Disposable {
+  private val connection = ApplicationManager.getApplication().messageBus.connect()
+
   companion object {
     const val COMMUNITY_PLUGIN_ID = "io.acari.DDLCTheme"
     private const val ULTIMATE_PLUGIN_ID = "io.unthrottled.DokiTheme"
@@ -48,7 +50,6 @@ class TheDokiTheme : Disposable {
         .map { it.version }
   }
 
-  private val connection = ApplicationManager.getApplication().messageBus.connect()
 
   init {
     hackLAF()

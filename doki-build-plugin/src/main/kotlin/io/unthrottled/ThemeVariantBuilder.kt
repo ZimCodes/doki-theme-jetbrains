@@ -50,18 +50,18 @@ abstract class ThemeVariantBuilder : DefaultTask() {
     jsonVariantTemplates: Map<Path, DokiThemeTemplate>,
     variantName: String
   ): Map<Path, DokiThemeTemplate> =
-    jsonVariantTemplates.filter { (_, template) -> template.id.endsWith(variantName) }
+    jsonVariantTemplates
       .map { (path, template) ->
-      val isDark = path.fileName.toString().contains("dark")
-      path to DokiThemeTemplate(
-        id = template.id + variantName,
-        parentTheme = getParentTheme(isDark),
-        editorScheme = template.editorScheme,
-        overrides = template.overrides,
-        ui = template.ui,
-        uiBase = getUIBase(template.uiBase, isDark, variantName)
-      )
-    }.toMap()
+        val isDark = path.fileName.toString().contains("dark")
+        path to DokiThemeTemplate(
+          id = template.id + variantName,
+          parentTheme = getParentTheme(isDark),
+          editorScheme = template.editorScheme,
+          overrides = template.overrides,
+          ui = template.ui,
+          uiBase = getUIBase(template.uiBase, isDark, variantName)
+        )
+      }.toMap()
 
   /*
   * Gets the correct parentTheme based on light/dark theme type.
@@ -104,7 +104,7 @@ abstract class ThemeVariantBuilder : DefaultTask() {
   ): Map<Path, DokiThemeTemplate> =
     dokiTemplate.mapKeys { (path, _) ->
       val fileName = path.fileName.toString()
-      val variantFileName = fileName.replace(ThemeVariant.DARCULA.lowercase,variantName)
+      val variantFileName = fileName.replace(ThemeVariant.DARCULA.lowercase, variantName)
       path.resolveSibling(variantFileName)
     }
 

@@ -12,9 +12,6 @@ enum class ThemeVariant {
 class DokiBuildPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     val variant: String = project.findProperty("variant") as String? ?: ThemeVariant.DARCULA.lowercase
-    project.tasks.register<PatchHTMLTask>("patchHTML") {
-      htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
-    }
     project.tasks.register<BuildThemesTask>("buildThemes") {
       variantName.set(variant)
       buildSourceAssetDirectory.set(project.layout.projectDirectory.dir("doki-build-plugin/assets"))
@@ -68,6 +65,9 @@ class DokiBuildPlugin : Plugin<Project> {
       description = "Retrieves all repositories doki-theme-jetbrains relies on."
       val command = "getRepoDependencies.sh"
       commandExecMap.put(MultiExecTask.OSType.AUTO, listOf(command))
+    }
+    project.tasks.register<PatchHTMLTask>("patchHTML") {
+      htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))
     }
   }
 }
