@@ -1,240 +1,112 @@
 Contributing
 ---
 
-# Outline
+Thank you for contributing!
 
-- [Build Process](#build-process-high-level-overview)
-- [Editing Themes](#editing-themes)
-- [Creating New Themes](#creating-new-themes)
+**doki-theme-jetbrains** is one part of the Doki Theme ecosystem. It is a
+project that relies on other doki theme projects. So, if you wish to
+contribute to **doki-theme-jetbrains** here are the following items needed to get started:
 
-# Build Process High level overview
+## Requirements
 
-I won't go into the minor details of the theme building process, however I will talk about the high level details of
-what is accomplished.
+- Java 21+
+- Intellij Idea
+- Typescript
+- yarn version 4+
 
-All themes have a base template that they inherit from. Themes have the ability to choose their inherited parent. Each
-child has the ability to override any attributes defined by the parent. This mitigates any one-off issues for themes
-that are not captured by the global shared style.
+## Getting Dependencies
 
-# Editing Themes
+doki-theme-jetbrains utilizes Gradle to make automating tasks easier. The
+first thing we will need is to grab all the other doki projects doki-theme-jetbrains depends
+on. To do this we will use a custom Gradle task called `initDokiProject`.
 
-## Editing Themes Required Software
-
-- Java 17
-- IntellIJ 2020.3+
-
-## Editing Themes Setup
-
-**Get the Master Themes**
-
-Since this theme suite expands across multiple platforms, in order to maintain consistency of the look and feel across
-platforms, there is a [central theme definition repository](https://github.com/doki-theme/doki-master-theme)
-
-This repository needs to be cloned as a directory called `masterThemes`. If you are running Linux/MacOS, you can
-run `getMasterThemes.sh` located at the root of this repository. This script does exactly what is required, if you are
-on Windows, have you considered Linux? Just kidding (mostly), you'll need to run this command
-
-```shell
-git clone https://github.com/doki-theme/doki-master-theme.git masterThemes
+```bash
+./gradlew initDokiProject
 ```
 
-Once that is done, for extra points, you can register the `masterThemes` directory, in Intellij, as another VCS root.
+`initDokiProject` essentially calls the `buildThemeDeps` task which in turn calls `getRepos` task.
 
-![VCS Root Config](./assets/contributingAssets/vcs_root.png)
+### Initialization Tasks
 
-## Build Setup
+These are tasks you will only need to run once.
 
-I have several codebases that I maintain which have a similar build processes. 
-So to reduce maintenance overhead, this repository uses https://github.com/doki-theme/doki-build-source-jvm .
+- `initDokiProject`: calls all initialization tasks listed below.
+  - `getRepos`: Retrieve projects from the doki theme ecosystem that doki-theme-jetbrains depends on
+  - `buildThemeDeps`: build dependencies found in each doki subproject retrieved from `getRepo`
 
-Doing so requires special setup for your development environment.
+## Variant Templates
 
-- First, you'll need to [Authenticate to GitHub Packages](https://docs.github.com/en/packages/learn-github-packages/introduction-to-github-packages#authenticating-to-github-packages)
-- Next, you'll need to set your GitHub username as the environment variable `GITHUB_ACTOR` when you run the plugin.
-- After that, use the access token you created from the first step as the value of the environment variable `GITHUB_TOKEN`.
-- Run, the plugin.
+Templates provides instructions for mapping and building both `<doki-theme>.theme.json` & `<doki-theme>.xml` files which
+IntelliJ will use to construct a theme.
 
-See this video for how to set it up to run in IntelliJ. 
+A variant is the base style supported by intelliJ. Right now IntelliJ has only 2 types:
 
-https://user-images.githubusercontent.com/15972415/215237933-469a5643-e8d9-4990-b47e-1db274629323.mp4
+- `islands`
+- `darcula`
 
-## Running Plugin
+### Template Tasks
 
-The [Gradle IntelliJ Plugin](https://github.com/JetBrains/gradle-intellij-plugin#gradle-intellij-plugin) does all of the
-heavy lifting for us. Here is the complete list
-of [tasks supplied by the plugin](https://github.com/JetBrains/gradle-intellij-plugin#tasks).
+There are 2 tasks for generating templates:
 
-Here is the list of all gradle tasks I use from that plugin.
+- `genVariantBaseTemplates`: Generates a <variant> of all the base templates located at
+  `doki-build-plugin/assets/templates`
+- `genVariantTemplates`: Generates a <variant> template from each of the doki templates found in
+  `doki-build-plugin/assets/themes`
+  - Automatically calls `genVariantBaseTemplates` before executing
 
-- `buildPlugin`
-- `runIde`
-- `verifyPlugin`
+So, if we want to generate `darcula` template variants we do not have to do anything. All templates found in
+`doki-build-plugin/assets/*` are `darcula` templates. **The tasks above are only used to generate new non-darcula variants!**.
 
-The important task for this step is `runIde`
-, [here is how to run gradle tasks in the IDE](https://www.jetbrains.com/help/idea/work-with-gradle-tasks.html#gradle_tasks)
-.
-**Note**: I choose the `gradlew` option. You can also do it via the command line, just use the gradle wrapper.
+if we want to generate a non-darcula variant such as `islands`, we would need to tell Gradle what variant we want to
+generate. To do this, we use the formula, `-Pvariant=<variant-name>`.
 
-```shell
-./gradlew runIde
+```bash
+# This will execute `genVariantBaseTemplate`  and `genVariantTemplate`
+./gradlew genVariantTemplates -Pvariant=islands
 ```
 
-If that doesn't work for some reason, it may because you cannot run IntelliJ Idea Ultimate. You can give in and purchase
-the IDE, or you can temporarily change the IDE run by the gradle plugin. This can be done by changing
-the [IntelliJ platform properties used](https://github.com/JetBrains/gradle-intellij-plugin#intellij-platform-properties)
-, more specifically the `type`. There is a `gradle.properties` file that contains an `IU`, just change that to `IC`. Run
-the `runIde` command again, and you should be good!
+### New Variant Templates
 
-## Theme Editing Process
+If you would like to add a new variant template, see [NEW_VARIANTS.md](./md_docs/NEW_VARIANTS.md)
 
-I have too many themes to maintain manually, so theme creation/maintenance is automated and shared common parts to
-reduce overhead.
+## Building Themes
 
-The standardized approach used by all the plugins supporting the Doki Theme suite, is that there is a `buildSrc`
-directory.
+The next steps are:
 
-Inside the `buildSrc` directory, there will be 2 directories:
+- Build each doki theme using the templates
+- Place each of the newly constructed doki theme in the doki-theme-jetbrain's resource folder
+- Map information about each doki theme including their name and location using *plugin.xml*
+- Update the `name` and `id` key in plugin.xml to match the name of the current variant being made into a plugin.
 
-- `src` - holds the code that builds the themes.
-- `assets` - defines the platform specific assets needed to build the themes. This directory normally contains two child
-  directories.
-  - `themes` - holds the [application definitions](#application-specific-templates)
-  - `templates` - if not empty, normally contains various text files that can be evaluated to replace variables with
-    values. Some cases, they also contain templates for evaluating things such as look and feel, colors, and other
-    things.
+Few that's a lot to do. Luckily, we can use a task called `buildThemes` to accomplish.
+We must specify what variant we would like to build using the formula, `-Pvariant=<variant-name>`. `darcula`
+is the default choice if `-P` option is not used.
 
-### JetBrains Themes specifics
-
-There are two important pieces that compose a theme:
-
-- `theme.json` - which defines the look and feel of the IDE. The panels and stuff that isn't code.
-- `editor_scheme.xml` - which defines the colors and such for the code editor (and also various look and feel components
-  which is annoying sometimes).
-
-See [creating a custom UI theme for more details](https://plugins.jetbrains.com/docs/intellij/themes.html#creating-custom-ui-themes)
-.
-
-Here is another
-good [resource for customizing themes](https://github.com/one-dark/jetbrains-one-dark-theme/discussions/206#discussioncomment-368647)
-
-### Submitting PR
-
-This is an [example of editing existing themes](https://github.com/doki-theme/doki-theme-jetbrains/pull/391).
-
-# Creating New Themes
-
-## Creating Themes Required Software
-
-- [Editing Themes required software](#editing-themes-required-software)
-- Yarn package manager
-- Node 14
-
-## Setup
-
-Follow the [editing themes setup](#editing-themes-setup)
-
-**Get the assets repository**
-
-Clone the [doki-theme-assets](https://github.com/doki-theme/doki-theme-assets) repository in the same parent directory
-as this plugin's repository.
-
-Your folder structure should look like this:
-
-```
-your-workspace/
-├─ doki-theme-jetbrains/
-│  ├─ masterThemes/
-├─ doki-theme-assets/
+```bash
+# Example of building 'darcula' themes
+./gradlew buildThemes
 ```
 
-**Set up Yarn Globals**
-
-I heavily use Node/Typescript to build all of my themes, and I have a fair amount of global tools installed.
-
-Just run
-
-```shell
-yarn global add typescript ts-node nodemon
+```bash
+# Example of building non-dracula themes like 'islands'
+./gradlew buildThemes -Pvariant=islands
 ```
 
-Note: if you already have these globally installed please make sure you are up to date!
+## Extra: Building a Plugin
 
-```shell
-yarn global upgrade typescript ts-node
+Once everything above have been completed, we can now create a plugin! We will
+use **Intellij Platform's** `buildPlugin` task. We must specify what variant we would like our plugin to be using the
+formula, `-Pvariant=<variant-name>`. `darcula` is the default choice if `-P` option is not used.
+
+**NOTE:** `buildPlugin` calls `buildThemes` before executing. **This means you can _skip_ `buildThemes` task if you ever
+decide to just run `buildPlugin`!**
+
+```bash
+# darcula example
+./gradlew buildPlugin
 ```
 
-**Install Master Themes node packages**
-
-Inside the `masterThemes` directory, you'll want to make sure all the dependencies are available to the build scripts.
-To accomplish this, just run this command in the `masterThemes` directory.
-
-```shell
-yarn
+```bash
+# non-darcula example
+./gradlew buildPlugin -Pvariant=islands
 ```
-
-You should be good after that!
-
-## Theme Creation Process
-
-This part is mostly automated, for the most part. There is only one thing you'll need to manually add. The rest of the
-steps will be performed by executing a script.
-
-When you add a new master theme definition in the `masterThemes/definition`, the convention
-is `<animeName>/<characterName>/<light|dark>/<characterName>.<light|dark>.master.definition.json`.
-_Please avoid spaces in the `animeName` & `characterName`._
-
-### Application specific templates
-
-Once you have a new master theme definition, it's now time to generate the application specific templates, which allow
-us to control individual theme specific settings.
-
-You'll want to edit the function used by `buildApplicationTemplate`
-and `appName` [defined here](https://github.com/doki-theme/doki-master-theme/blob/596bbe7b258c65e485257a14887ee9b4e0e8b659/buildSrc/AppThemeTemplateGenerator.ts#L79)
-in your `masterThemes` directory.
-
-In the case of this plugin the `buildApplicationsTemplate` should use the `jetbrainsTemplate` and `appName` should
-be `jetbrains`.
-
-Once this is done, we can now run the `generateAssets` script. Which will walk the master theme definitions and create
-blank assets in the expected folder structure, inside various directories in the `<workspace-root>/doki-theme-assets/`
-directory.
-
-```shell
-yarn generateAssets
-```
-
-After that, we need run the `generateTemplates` script. Which will walk the master theme definitions and create the new
-templates in the `<repo-root>/buildSrc/assets/themes` directory (and update existing ones).
-
-```shell
-yarn generateTemplates
-```
-
-If you added a new anime, you'll need to add
-a [new group mapping](https://github.com/doki-theme/doki-theme-jetbrains/blob/10b421a915adb20b66f9246f80f563dd13ad73c0/buildSrc/src/main/kotlin/Tools.kt#L2)
-The code defined in the `buildSrc/src` directory is part of the Doki Theme gradle plugin, which exposes a `buildThemes`
-task. This task gets run everytime you run the IDE, or build the plugin. It does all the annoying tedious stuff such as:
-
-- Putting the theme definition in the `plugin.xml`
-- Evaluating the `theme.json` and `editor_schema.xml`. See [JetBrains Specifics](#jetbrains-specifics) for more details
-
-When making changes to the JetBrains templates, there are two options for the editor scheme creation:
-
-- `template` - which expects the name of the initial parent, and outputs an editor scheme evaluted for the master theme
-  definition.
-- `templateExtension` - takes the name of the `file` in the same
-  directory. [Here is an example](https://github.com/doki-theme/doki-theme-jetbrains/blob/main/buildSrc/assets/themes/swordArtOnline/asuna/dark/asuna.dark.jetbrains.definition.json)
-  .
-
-Once you have completed all of those steps, you've got all the things available to you to create a brand-new theme!
-
-[Here is an example pull request that captures all the artifacts from the development process of new themes](https://github.com/doki-theme/doki-theme-jetbrains/pull/407/files)
-.
-
-Here are all the relevant gradle tasks you'll be using:
-
-- `buildThemes`
-- `check`
-- `ktlintFormat`
-- `runIde`
-- `buildPlugin` - if you want to manually install the plugin to an existing IDE.

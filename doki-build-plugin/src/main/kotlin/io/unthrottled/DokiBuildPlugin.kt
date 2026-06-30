@@ -48,6 +48,7 @@ class DokiBuildPlugin : Plugin<Project> {
       dependsOn( "buildThemeDeps")
     }
     project.tasks.register<MultiExecTask>("buildThemeDeps") {
+      description = "build dependencies found in each doki sub project retrieved from 'getRepo'"
       mustRunAfter("getRepos")
       val install = "yarn install"
       commandExecMap.put(

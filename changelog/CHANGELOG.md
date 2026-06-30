@@ -1,5 +1,22 @@
 # Changelog
 ---
+## - [Islands Themes]
+### Added
+- Support islands theme for all doki themes
+
+### Updated
+- Improve background color to buttons
+- Implement border color for buttons
+- Update color for scrollbar in editor's tab section 
+
+### Removed
+- Remove deprecated/unsupported themeMetadata keys
+
+### Fixed
+- Alert dialog boxes does not follow current doki theme
+- Notification link colors not folowing current doki theme
+- links pointing to predecessors repo
+- Border for inactive tab not following current doki theme
 
 ## 2.2.0 - [Build Support 2026.1]
 
