@@ -22,6 +22,7 @@ If you haven't done already, [setup your development environment](./md_docs/DEV_
 
 - `name`: The name of you doki theme variant
 - `displayName`: The name shown to users
+- `author`: Your name
 - `colors`: This is where you customize your doki theme colors. Just replace each `#hexadecimal` color with your own!
   - You can use `doki-build-plugin/assets/template/base.laf.template.json` as your guide to see what each color name
     control.
