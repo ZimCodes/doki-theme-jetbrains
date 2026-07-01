@@ -1,68 +1,34 @@
 package io.unthrottled.doki.build.plugin
 
-import com.google.gson.GsonBuilder
-import com.google.gson.ToNumberPolicy
 import groovy.util.Node
 import groovy.util.NodeList
-import io.unthrottled.doki.build.jvm.models.AssetTemplateDefinition
-import io.unthrottled.doki.build.jvm.models.Background
-import io.unthrottled.doki.build.jvm.models.Backgrounds
-import io.unthrottled.doki.build.jvm.models.BuildSticker
-import io.unthrottled.doki.build.jvm.models.BuildStickers
-import io.unthrottled.doki.build.jvm.models.JetbrainsAppDefinition
-import io.unthrottled.doki.build.jvm.models.JetbrainsStickers
-import io.unthrottled.doki.build.jvm.models.JetbrainsThemeDefinition
-import io.unthrottled.doki.build.jvm.models.MasterThemeDefinition
-import io.unthrottled.doki.build.jvm.models.StringDictionary
-import io.unthrottled.doki.build.jvm.models.ThemeDefinitionSchema
-import io.unthrottled.doki.build.jvm.tools.BuildFunctions
+import io.unthrottled.doki.build.jvm.models.*
+import io.unthrottled.doki.build.jvm.tools.*
 import io.unthrottled.doki.build.jvm.tools.BuildFunctions.combineMaps
 import io.unthrottled.doki.build.jvm.tools.ColorTools.isColorCode
-import io.unthrottled.doki.build.jvm.tools.CommonConstructionFunctions
-import io.unthrottled.doki.build.jvm.tools.ConstructableAsset
-import io.unthrottled.doki.build.jvm.tools.ConstructableAssetSupplier
-import io.unthrottled.doki.build.jvm.tools.ConstructableAssetSupplierFactory
-import io.unthrottled.doki.build.jvm.tools.ConstructableTypes
-import io.unthrottled.doki.build.jvm.tools.DokiProduct
 import io.unthrottled.doki.build.jvm.tools.GroupToNameMapping.getLafNamePrefix
 import io.unthrottled.doki.build.jvm.tools.PathTools.cleanDirectory
-import io.unthrottled.doki.build.jvm.tools.resolveColor
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.*
 import java.io.File
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
-import java.nio.file.Files.createDirectories
-import java.nio.file.Files.delete
-import java.nio.file.Files.exists
-import java.nio.file.Files.isDirectory
-import java.nio.file.Files.newBufferedWriter
-import java.nio.file.Files.newInputStream
-import java.nio.file.Files.walk
+import java.nio.file.Files.*
 import java.nio.file.Path
 import java.nio.file.Paths.get
 import java.nio.file.StandardOpenOption
-import java.util.Collections
-import java.util.LinkedList
+import java.util.*
 import java.util.Optional
-import java.util.TreeMap
 import java.util.stream.Collectors
-import kotlin.collections.get
 
 data class JetbrainsThemeOnlyDefinition(
   val id: String,
   val name: String,
   val dark: Boolean,
+  val parentTheme: String?,
   val author: String?,
   val editorScheme: String,
   val colors: StringDictionary<Any>,
@@ -75,6 +41,9 @@ fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
 
 @CacheableTask
 abstract class BuildThemesTask : DefaultTask() {
+  @get:Input
+  abstract val variantName: Property<String>
+
   @get:Internal
   abstract val rootResourcePath: DirectoryProperty
 
@@ -89,6 +58,10 @@ abstract class BuildThemesTask : DefaultTask() {
   @get:InputFile
   @get:PathSensitive(PathSensitivity.NAME_ONLY)
   abstract val resMasterThemeSchema: RegularFileProperty
+
+  @get:InputFile
+  @get:PathSensitive(PathSensitivity.RELATIVE)
+  abstract val templatePluginXML: RegularFileProperty
 
   @get:OutputDirectory
   abstract val resDokiThemesDirectory: DirectoryProperty
@@ -115,11 +88,7 @@ abstract class BuildThemesTask : DefaultTask() {
   private fun getThemeSchema(): ThemeDefinitionSchema =
     newInputStream(resMasterThemeSchema.get().asFile.toPath()).use {
       val inputStreamReader: InputStreamReader = InputStreamReader(it, StandardCharsets.UTF_8)
-      val gson = GsonBuilder()
-        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
-        .setPrettyPrinting()
-        .create()
-      gson.fromJson(
+      CommonConstructionFunctions.gson.fromJson(
         inputStreamReader,
         ThemeDefinitionSchema::class.java
       )
@@ -129,63 +98,60 @@ abstract class BuildThemesTask : DefaultTask() {
   fun run() {
     val buildSourceAssetDirectory = buildSourceAssetDirectory.get().asFile.toPath()
     val masterThemesDirectory = masterThemesDirectory.get().asFile.toPath()
+    // LAF templates (laf.template.json) and COLOR templates in masterTheme (color.template.json)
     val constructableAssetSupplier =
       ConstructableAssetSupplierFactory.createCommonAssetsTemplate(
         buildSourceAssetDirectory,
         masterThemesDirectory
       )
+    // Is a Map with all editorscheme types. Ex: {key -> Doki Dim, value -> the entire editorScheme file content}
     val dokiEditorThemeTemplates = createEditorThemeDefinitions(buildSourceAssetDirectory)
 
-    val (pluginXmlAndParsed, extension) = getPluginXmlMutationStuff()
-    val (pluginXml, parsedPluginXml) = pluginXmlAndParsed
+    val resPluginXmlPath = templatePluginXML.get().asFile.toPath()
+    val (parsedPluginXml, extension) = getPluginXmlMutationStuff(resPluginXmlPath)
 
-    cleanPluginXml(extension)
     cleanDirectory(resDokiThemesDirectory.get().asFile.toPath())
 
+    // doki-build-plugin/assets/themes directory
     val jetbrainsDokiThemeDefinitionDirectory = getThemeDefinitionDirectory()
 
-
-    CommonConstructionFunctions.getAllDokiThemeDefinitions(
+    val variantName = variantName.get()
+    CommonConstructionFunctions.getAllJetbrainsDefinitions(
       DokiProduct.JETBRAINS_THEME,
       jetbrainsDokiThemeDefinitionDirectory,
       masterThemesDirectory,
-      JetbrainsAppDefinition::class.java
+      JetbrainsAppDefinition::class.java,
+      variantName
     )
       .forEach { pathMasterDefinitionAndJetbrainsDefinition ->
-        val dokiThemeResourcePath = constructIntellijTheme(
+        val variantResourcePath = constructIntellijTheme(
           pathMasterDefinitionAndJetbrainsDefinition,
           constructableAssetSupplier,
-          dokiEditorThemeTemplates
+          dokiEditorThemeTemplates,
+          variantName
         )
 
-        val themeId = pathMasterDefinitionAndJetbrainsDefinition.second.id
-        addThemeToPluginXml(extension, themeId, dokiThemeResourcePath)
+        val themeId = pathMasterDefinitionAndJetbrainsDefinition.second.id + getVarName(variantName)
+        addThemeToPluginXml(extension, themeId, variantResourcePath)
       }
 
-    writeProductName(parsedPluginXml)
-
-    writeXmlToFile(pluginXml, parsedPluginXml)
+    writeProductName(parsedPluginXml, variantName)
+    writeXmlToFile(resPluginXML.get().asFile.toPath(), parsedPluginXml)
   }
 
+  private fun getVarName(variantName: String) : String = if (variantName == ThemeVariant.DARCULA.lowercase) "" else variantName
 
-  private fun writeProductName(pluginXml: Node) {
+
+
+  private fun writeProductName(pluginXml: Node, variantName: String) {
     val nameNodeList = pluginXml["name"] as NodeList
     val productPostfix = if (isUltimateBuild()) " Ultimate" else ""
     val nameNode = nameNodeList[0] as Node
-    nameNode.setValue("$PLUGIN_NAME$productPostfix")
+    nameNode.setValue("$PLUGIN_NAME$productPostfix ${variantName.replaceFirstChar { it.titlecaseChar() }}")
     val pluginId = if (isUltimateBuild()) ULTIMATE_PLUGIN_ID else COMMUNITY_PLUGIN_ID
     val idNodeList = pluginXml["id"] as NodeList
     val idNode = idNodeList[0] as Node
-    idNode.setValue(pluginId)
-  }
-
-  private fun cleanPluginXml(extension: Node) {
-    val themeProviders = extension["themeProvider"] as NodeList
-    themeProviders
-      .map { it as Node }
-      .forEach {
-        extension.remove(it)
-      }
+    idNode.setValue(if (variantName == ThemeVariant.DARCULA.lowercase) pluginId else "$pluginId.$variantName")
   }
 
   private fun addThemeToPluginXml(extension: Node, themeId: String, dokiThemeResourcePath: String) {
@@ -214,10 +180,9 @@ abstract class BuildThemesTask : DefaultTask() {
       .map { parseXml(it) }
       .collect(Collectors.toMap({ it.attribute("name") as String }, { it }, { a, _ -> a }))
 
-  private fun getPluginXmlMutationStuff(): Pair<Pair<Path, Node>, Node> {
-    val pluginXml = resPluginXML.get().asFile.toPath()
-    val parsedPlugin = parseXml(pluginXml)
-    return pluginXml to parsedPlugin to (parsedPlugin["extensions"] as NodeList)
+  private fun getPluginXmlMutationStuff(pluginXMLPath: Path): Pair<Node, Node> {
+    val parsedPlugin = parseXml(pluginXMLPath)
+    return parsedPlugin to (parsedPlugin["extensions"] as NodeList)
       .map { it as Node }
       .find { node ->
         node.attribute("defaultExtensionNs") == "com.intellij"
@@ -227,22 +192,29 @@ abstract class BuildThemesTask : DefaultTask() {
   private fun constructIntellijTheme(
     pathMasterAndJetbrainsDefinition: Triple<Path, MasterThemeDefinition, JetbrainsAppDefinition>,
     constructableAssetSupplier: ConstructableAssetSupplier,
-    dokiEditorThemeTemplates: Map<String, Node>
+    dokiEditorThemeTemplates: Map<String, Node>,
+    variantName: String
   ): String {
     val (
       dokiThemeDefinitionPath,
       masterThemeDefinition,
-      jetbrainsDefinition
+      jetbrainsDefinition,
     ) = pathMasterAndJetbrainsDefinition
     val resourceDirectory = getResourceDirectory(masterThemeDefinition)
     if (!exists(resourceDirectory)) {
       createDirectories(resourceDirectory)
     }
 
-    val themeJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}.theme.json")
+    val themeJson = get(
+      resourceDirectory.toString(),
+      "${masterThemeDefinition.usableName}${if (variantName == ThemeVariant.DARCULA.lowercase) "" else ".$variantName"}.theme.json"
+    )
     deleteIfExists(themeJson)
 
-    val themeMetadataJson = get(resourceDirectory.toString(), "${masterThemeDefinition.usableName}.theme.meta.json")
+    val themeMetadataJson = get(
+      resourceDirectory.toString(),
+      "${masterThemeDefinition.usableName}${if (variantName == ThemeVariant.DARCULA.lowercase) "" else ".$variantName"}.theme.meta.json"
+    )
     deleteIfExists(themeMetadataJson)
 
     val initialParentTemplateName = if (masterThemeDefinition.dark) "dark" else "light"
@@ -270,11 +242,14 @@ abstract class BuildThemesTask : DefaultTask() {
       )
 
     val colors = validateColors(masterThemeDefinition, resolvedNamedColors)
+    val themeName =
+      "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}${if (variantName == ThemeVariant.DARCULA.lowercase) "" else " ${variantName.replaceFirstChar { it.titlecaseChar() }}"}"
     val finalTheme = JetbrainsThemeOnlyDefinition(
-      id = masterThemeDefinition.id,
-      name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
+      id = masterThemeDefinition.id + getVarName(variantName),
+      name = themeName,
       dark = masterThemeDefinition.dark,
       author = masterThemeDefinition.author,
+      parentTheme = jetbrainsDefinition.parentTheme,
       editorScheme = createEditorScheme(
         masterThemeDefinition,
         jetbrainsDefinition,
@@ -294,13 +269,13 @@ abstract class BuildThemesTask : DefaultTask() {
       ),
       icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
     )
-
     val fullMetaTheme = JetbrainsThemeDefinition(
-      id = masterThemeDefinition.id,
-      name = "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}",
+      id = masterThemeDefinition.id + getVarName(variantName),
+      name = themeName,
       displayName = masterThemeDefinition.displayName,
       dark = masterThemeDefinition.dark,
       author = masterThemeDefinition.author,
+      parentTheme = jetbrainsDefinition.parentTheme,
       editorScheme = createEditorScheme(
         masterThemeDefinition,
         jetbrainsDefinition,
@@ -327,22 +302,15 @@ abstract class BuildThemesTask : DefaultTask() {
       icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
       meta = masterThemeDefinition.meta ?: Collections.emptyMap()
     )
-
-
     writeJson(themeJson, finalTheme)
     writeJson(themeMetadataJson, fullMetaTheme)
-
     return extractResourcesPath(themeJson)
   }
 
   private fun <T> writeJson(themePath: Path, themeMap: T) {
     newBufferedWriter(themePath, StandardOpenOption.CREATE_NEW)
       .use { writer ->
-        val gson = GsonBuilder()
-          .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
-          .setPrettyPrinting()
-          .create()
-        gson.toJson(themeMap, writer)
+        CommonConstructionFunctions.gson.toJson(themeMap, writer)
       }
   }
 
@@ -562,8 +530,10 @@ abstract class BuildThemesTask : DefaultTask() {
         else -> value
       }
     }
-    .collect(Collectors.toMap({ it.first }, { it.second }, { _, b -> b },
-      { TreeMap(Comparator.comparing { item -> item.lowercase() }) })
+    .collect(
+      Collectors.toMap(
+        { it.first }, { it.second }, { _, b -> b },
+        { TreeMap(Comparator.comparing { item -> item.lowercase() }) })
     )
 
   private fun createEditorScheme(
@@ -639,7 +609,7 @@ abstract class BuildThemesTask : DefaultTask() {
           ) {
             @Suppress("UNCHECKED_CAST")
             val nodeList = currentDude as MutableList<Node>
-            nodeList.sortBy { node -> getComparable(node)}
+            nodeList.sortBy { node -> getComparable(node) }
             queue.addAll(nodeList)
           }
         }

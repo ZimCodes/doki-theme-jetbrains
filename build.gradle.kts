@@ -1,4 +1,6 @@
+import io.unthrottled.doki.build.plugin.ThemeVariant
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   id("io.unthrottled.doki.build.plugin.dokibuildplugin")
   alias(libs.plugins.kotlin)
@@ -12,7 +14,7 @@ version = providers.gradleProperty("pluginVersion").get()
 // Set the JVM language level used to build the project.
 kotlin {
   jvmToolchain(21)
-  compilerOptions{
+  compilerOptions {
     jvmTarget.set(JvmTarget.JVM_21)
   }
 }
@@ -68,7 +70,8 @@ intellijPlatform {
     // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
     // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
     // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-    channels = providers.gradleProperty("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
+    channels = providers.gradleProperty("pluginVersion")
+      .map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
   }
 
   pluginVerification {
@@ -86,7 +89,10 @@ tasks {
   patchPluginXml {
     dependsOn("buildThemes")
   }
-//  publishPlugin {
-//    dependsOn(patchChangelog)
-//  }
+
+  // NOTE: To generate a variant: gradlew genTemplates -Pvariant=islands
+  buildPlugin {
+    val variantName = findProperty("variant") as? String ?: ThemeVariant.DARCULA.lowercase
+    archiveBaseName.set("doki-theme-$variantName")
+  }
 }
