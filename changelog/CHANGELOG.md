@@ -1,6 +1,8 @@
 # Changelog
 ---
 
+## - [Custom Doki Color Theme]
+
 ## 3.0.0 - [Islands Themes Support]
 
 ### Added
