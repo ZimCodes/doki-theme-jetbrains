@@ -1,18 +1,24 @@
 # Changelog
 ---
-## - [Islands Themes]
+
+## 3.0.0 - [Islands Themes Support]
+
 ### Added
+
 - Support islands theme for all doki themes
 
 ### Updated
+
 - Improve background color to buttons
 - Implement border color for buttons
-- Update color for scrollbar in editor's tab section 
+- Update color for scrollbar in editor's tab section
 
 ### Removed
+
 - Remove deprecated/unsupported themeMetadata keys
 
 ### Fixed
+
 - Alert dialog boxes does not follow current doki theme
 - Notification link colors not folowing current doki theme
 - links pointing to predecessors repo
@@ -21,6 +27,7 @@
 ## 2.2.0 - [Build Support 2026.1]
 
 ## Updated
+
 - dependencies
 - Upgrade Gradle: `9.2.1` -> `9.4.1`
 

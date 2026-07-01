@@ -6,7 +6,8 @@ Development Setup
 - Java 21+
 - IntelliJ IDEA
 - Typescript
-- yarn version 4+
+- Node.js 24+
+- yarn v4+
 
 ## Getting Dependencies
 
