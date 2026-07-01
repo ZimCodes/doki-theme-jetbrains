@@ -31,7 +31,8 @@ doki-build-source-jvm/
 doki-build-source/
 
 # Generated doki theme variant templates
-doki-build-plugin/assets/themes/**/*.islands*.json
+doki-build-plugin/assets/themes/**/*.json
+doki-build-plugin/assets/themes/**/!*.darcula*.json
 
 # Generated base templates
 doki-build-plugin/assets/templates/*.islands*.json

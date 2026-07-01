@@ -4,14 +4,18 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
+
 enum class ThemeVariant {
-  DARCULA,ISLANDS;
-  val lowercase : String
+  DARCULA, ISLANDS;
+
+  val lowercase: String
     get() = this.name.lowercase()
 }
+
 class DokiBuildPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     val variant: String = project.findProperty("variant") as String? ?: ThemeVariant.DARCULA.lowercase
+    fun isDefaultVariant(): Boolean = !project.hasProperty("variant") || variant == ThemeVariant.DARCULA.lowercase
     project.tasks.register<BuildThemesTask>("buildThemes") {
       variantName.set(variant)
       buildSourceAssetDirectory.set(project.layout.projectDirectory.dir("doki-build-plugin/assets"))
@@ -24,7 +28,7 @@ class DokiBuildPlugin : Plugin<Project> {
     }
     // NOTE: To generate a variant: gradlew genTemplates -Pvariant=islands
     project.tasks.register<ThemeVariantBuilder>("genVariantTemplates") {
-      if (!project.hasProperty("variant") || variant == ThemeVariant.DARCULA.lowercase) {
+      if (isDefaultVariant()) {
         throw IllegalArgumentException("You have must specify a non-darcula variant: '--project-prop=<variant>'")
       }
       dependsOn("genVariantBaseTemplates")
@@ -36,16 +40,31 @@ class DokiBuildPlugin : Plugin<Project> {
     }
     // NOTE: To generate a variant: gradlew genVariantBaseTemplates -Pvariant=islands
     project.tasks.register<TemplateVariantBuilder>("genVariantBaseTemplates") {
-      if (!project.hasProperty("variant") || variant == ThemeVariant.DARCULA.lowercase) {
+      if (isDefaultVariant()) {
         throw IllegalArgumentException("You have must specify a non-darcula variant: '--project-prop=<variant>'")
       }
       description = "Generates base starter templates for a variant using darcula's base templates as a guide."
       variantName.set(variant)
     }
+    // NOTE: To generate a variant: gradlew genVariantBaseTemplates -Pvariant=islands
+    project.tasks.register<MultiExecTask>("genCustomDokiColorTemplate") {
+      description =
+        "Generates a doki template based on all newly created custom doki color variant found in 'masterThemes/' folder."
+      if (!isDefaultVariant()) {
+        dependsOn("genVariantTemplates")
+      }
+      val generateCmd = "yarn generateCustomJetbrainsTemplate${if (variant == null) "" else " $variant"}"
+      commandExecMap.put(
+        MultiExecTask.OSType.AUTO, listOf(
+          "cd masterThemes",
+          generateCmd,
+        )
+      )
+    }
     project.tasks.register<DefaultTask>("initDokiProject") {
       group = "doki"
       description = "Gets all necessary repos and build their dependencies."
-      dependsOn( "buildThemeDeps")
+      dependsOn("buildThemeDeps")
     }
     project.tasks.register<MultiExecTask>("buildThemeDeps") {
       description = "build dependencies found in each doki sub project retrieved from 'getRepo'"
