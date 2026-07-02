@@ -5,9 +5,9 @@ import io.unthrottled.doki.stickers.StickerPaneService
 
 object MoveableStickerActor {
   fun moveableStickers(enabled: Boolean) {
-    if (enabled != ThemeConfig.instance.isMoveableStickers) {
-      ThemeConfig.instance.isMoveableStickers = enabled
-      StickerPaneService.instance.setStickerPositioning(enabled)
+    if (enabled != ThemeConfig.getInstance().isMoveableStickers) {
+      ThemeConfig.getInstance().isMoveableStickers = enabled
+      StickerPaneService.getInstance().setStickerPositioning(enabled)
     }
   }
 }

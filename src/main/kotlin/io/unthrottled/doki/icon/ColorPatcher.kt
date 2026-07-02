@@ -205,7 +205,7 @@ object ColorPatcher : SvgElementColorPatcherProvider {
             getThemedStopColor()
           }
           patchAccent(attributes["editorAccentTint"], attributes) {
-            ThemeManager.instance.currentTheme
+            ThemeManager.getInstance().currentTheme
               .map { it.editorAccentColor.toHexString() }
               .orElseGet { JBColor.CYAN.toHexString() }
           }

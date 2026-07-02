@@ -37,7 +37,7 @@ object AssetManager {
 
   /**
    * Will return a resolvable URL that can be used to reference an asset.
-   * If the asset was able to be downloaded on the local machine it will return a
+   * If the asset was  downloaded on the local machine it will return a
    * file:// url to the local asset. If it was not able to get the asset then it
    * will return empty if the asset is not available locally.
    */

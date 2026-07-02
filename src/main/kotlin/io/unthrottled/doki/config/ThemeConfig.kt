@@ -15,10 +15,10 @@ import java.util.Locale
   name = "DokiDokiThemeConfig",
   storages = [Storage("doki_doki_theme.xml")],
 )
+//TODO: Use SerializeablePersistentStateComponent instead
 class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   companion object {
-    val instance: ThemeConfig
-      get() = ApplicationManager.getApplication().getService(ThemeConfig::class.java)
+    fun getInstance(): ThemeConfig = ApplicationManager.getApplication().getService(ThemeConfig::class.java)
   }
 
   var ignoreScaling: Boolean = false
@@ -30,7 +30,6 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
   var isNotShowReadmeAtStartup: Boolean = false
   var version: String = "0.0.0"
   var stickerLevel: String = StickerLevel.ON.name
-  var isFirstTime: Boolean = true
   var isDokiBackground: Boolean = false
   var isEmptyFrameBackground: Boolean = true
   var showThemeStatusBar: Boolean = true
@@ -41,11 +40,6 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
 
   var isOverrideConsoleFont: Boolean = false
   var consoleFontName: String = "JetBrains Mono"
-
-  // todo remove this after release has cooked
-  var isMaterialDirectories: Boolean = false
-  var isMaterialFiles: Boolean = false
-  var isMaterialPSIIcons: Boolean = false
 
   var capStickerDimensions: Boolean = false
   var maxStickerWidth: Int = -1

@@ -35,8 +35,7 @@ class TheDokiTheme : Disposable {
     const val COMMUNITY_PLUGIN_ID = "io.acari.DDLCTheme"
     private const val ULTIMATE_PLUGIN_ID = "io.unthrottled.DokiTheme"
 
-    val instance: TheDokiTheme
-      get() = ApplicationManager.getApplication().getService(TheDokiTheme::class.java)
+    fun getInstance(): TheDokiTheme = ApplicationManager.getApplication().getService(TheDokiTheme::class.java)
 
     fun getVersion(): Optional<String> =
       PluginManagerCore.getPlugin(PluginId.getId(COMMUNITY_PLUGIN_ID))
@@ -62,7 +61,7 @@ class TheDokiTheme : Disposable {
       ApplicationActivationListener.TOPIC,
       object : ApplicationActivationListener {
         override fun applicationActivated(ideFrame: IdeFrame) {
-          ThemeManager.instance.currentTheme.ifPresent {
+          ThemeManager.getInstance().currentTheme.ifPresent {
             setSVGColorPatcher(it)
           }
         }
@@ -72,7 +71,7 @@ class TheDokiTheme : Disposable {
     connection.subscribe(
       LafManagerListener.TOPIC,
       LafManagerListener {
-        ThemeManager.instance.currentTheme
+        ThemeManager.getInstance().currentTheme
           .doOrElse({
             setSVGColorPatcher(it)
             installAllUIComponents()
@@ -92,25 +91,25 @@ class TheDokiTheme : Disposable {
 
   fun projectOpened(project: Project) {
     EXPUIFixer.fixExperimentalUI()
-    ThemeManager.instance.currentTheme
+    ThemeManager.getInstance().currentTheme
       .ifPresent {
-        EditorBackgroundWallpaperService.instance.checkForUpdates(it)
-        EmptyFrameWallpaperService.instance.checkForUpdates(it)
-        StickerPaneService.instance.checkForUpdates(it)
+        EditorBackgroundWallpaperService.getInstance().checkForUpdates(it)
+        EmptyFrameWallpaperService.getInstance().checkForUpdates(it)
+        StickerPaneService.getInstance().checkForUpdates(it)
       }
 
     getVersion()
       .ifPresent { version ->
-        if (version != ThemeConfig.instance.version) {
-          ThemeConfig.instance.version = version
+        if (version != ThemeConfig.getInstance().version) {
+          ThemeConfig.getInstance().version = version
         }
       }
     registerUser()
   }
 
   private fun registerUser() {
-    if (ThemeConfig.instance.userId.isEmpty()) {
-      ThemeConfig.instance.userId = UUID.randomUUID().toString()
+    if (ThemeConfig.getInstance().userId.isEmpty()) {
+      ThemeConfig.getInstance().userId = UUID.randomUUID().toString()
     }
   }
 

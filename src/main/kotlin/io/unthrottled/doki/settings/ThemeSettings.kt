@@ -68,32 +68,32 @@ object ThemeSettings {
   @JvmStatic
   fun createThemeSettingsModel(): ThemeSettingsModel =
     ThemeSettingsModel(
-      areStickersEnabled = ThemeConfig.instance.currentStickerLevel == StickerLevel.ON,
-      currentTheme = ThemeManager.instance.currentTheme.map { it.name }.orElseGet { ThemeManager.DEFAULT_THEME_NAME },
-      showThemeStatusBar = ThemeConfig.instance.showThemeStatusBar,
-      currentSticker = ThemeConfig.instance.currentSticker,
-      isNotShowReadmeAtStartup = ThemeConfig.instance.isNotShowReadmeAtStartup,
-      isMoveableStickers = ThemeConfig.instance.isMoveableStickers,
-      isDokiBackground = ThemeConfig.instance.isDokiBackground,
-      discreetMode = ThemeConfig.instance.discreetMode,
-      isEmptyFrameBackground = ThemeConfig.instance.isEmptyFrameBackground,
+      areStickersEnabled = ThemeConfig.getInstance().currentStickerLevel == StickerLevel.ON,
+      currentTheme = ThemeManager.getInstance().currentTheme.map { it.name }.orElseGet { ThemeManager.DEFAULT_THEME_NAME },
+      showThemeStatusBar = ThemeConfig.getInstance().showThemeStatusBar,
+      currentSticker = ThemeConfig.getInstance().currentSticker,
+      isNotShowReadmeAtStartup = ThemeConfig.getInstance().isNotShowReadmeAtStartup,
+      isMoveableStickers = ThemeConfig.getInstance().isMoveableStickers,
+      isDokiBackground = ThemeConfig.getInstance().isDokiBackground,
+      discreetMode = ThemeConfig.getInstance().discreetMode,
+      isEmptyFrameBackground = ThemeConfig.getInstance().isEmptyFrameBackground,
       isCustomSticker = CustomStickerService.isCustomStickers,
       customStickerPath = CustomStickerService.getCustomStickerPath().orElse(""),
-      isCustomFontSize = ThemeConfig.instance.isGlobalFontSize,
-      customFontSizeValue = ThemeConfig.instance.customFontSize,
-      isSeeThroughNotifications = ThemeConfig.instance.isSeeThroughNotifications,
-      notificationOpacity = ThemeConfig.instance.notificationOpacity,
-      isOverrideConsoleFont = ThemeConfig.instance.isOverrideConsoleFont,
-      consoleFontValue = ThemeConfig.instance.consoleFontName,
-      maxStickerHeight = ThemeConfig.instance.maxStickerHeight,
-      maxStickerWidth = ThemeConfig.instance.maxStickerWidth,
-      capStickerDimensions = ThemeConfig.instance.capStickerDimensions,
-      smallMaxStickerHeight = ThemeConfig.instance.smallMaxStickerHeight,
-      smallMaxStickerWidth = ThemeConfig.instance.smallMaxStickerWidth,
-      showSmallStickers = ThemeConfig.instance.showSmallStickers,
-      ignoreScaling = ThemeConfig.instance.ignoreScaling,
-      hideOnHover = ThemeConfig.instance.hideOnHover,
-      hideDelayMS = ThemeConfig.instance.hideDelayMS,
+      isCustomFontSize = ThemeConfig.getInstance().isGlobalFontSize,
+      customFontSizeValue = ThemeConfig.getInstance().customFontSize,
+      isSeeThroughNotifications = ThemeConfig.getInstance().isSeeThroughNotifications,
+      notificationOpacity = ThemeConfig.getInstance().notificationOpacity,
+      isOverrideConsoleFont = ThemeConfig.getInstance().isOverrideConsoleFont,
+      consoleFontValue = ThemeConfig.getInstance().consoleFontName,
+      maxStickerHeight = ThemeConfig.getInstance().maxStickerHeight,
+      maxStickerWidth = ThemeConfig.getInstance().maxStickerWidth,
+      capStickerDimensions = ThemeConfig.getInstance().capStickerDimensions,
+      smallMaxStickerHeight = ThemeConfig.getInstance().smallMaxStickerHeight,
+      smallMaxStickerWidth = ThemeConfig.getInstance().smallMaxStickerWidth,
+      showSmallStickers = ThemeConfig.getInstance().showSmallStickers,
+      ignoreScaling = ThemeConfig.getInstance().ignoreScaling,
+      hideOnHover = ThemeConfig.getInstance().hideOnHover,
+      hideDelayMS = ThemeConfig.getInstance().hideDelayMS,
     )
 
   fun apply(themeSettingsModel: ThemeSettingsModel) {
@@ -135,7 +135,7 @@ object ThemeSettings {
     StickerHideActor.setStickerHideStuff(themeSettingsModel.hideOnHover, themeSettingsModel.hideDelayMS)
     ApplicationManager.getApplication().messageBus.syncPublisher(
       THEME_CONFIG_TOPIC,
-    ).themeConfigUpdated(ThemeConfig.instance)
+    ).themeConfigUpdated(ThemeConfig.getInstance())
   }
 
   fun createThemeComboBoxModel(settingsSupplier: () -> ThemeSettingsModel): ComboBox<String> {
@@ -143,7 +143,7 @@ object ThemeSettings {
       ComboBox(
         DefaultComboBoxModel(
           Vector(
-            ThemeManager.instance.allThemes
+            ThemeManager.getInstance().allThemes
               .sortedBy { theme -> theme.name }
               .map { it.name },
           ),

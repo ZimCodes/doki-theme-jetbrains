@@ -6,17 +6,13 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.util.Urls
 import com.intellij.util.io.HttpRequests
 import io.unthrottled.doki.util.Logging
 import io.unthrottled.doki.util.logger
-import io.unthrottled.doki.util.runSafelyWithResult
 import io.unthrottled.doki.util.toOptional
-import java.util.Collections
-import java.util.concurrent.Callable
 
 const val MOTIVATOR_PLUGIN_ID = "zd.zero.waifu-motivator-plugin"
 const val RANDOMIZER_PLUGIN_ID = "io.unthrottled.theme.randomizer"
@@ -24,11 +20,6 @@ const val DOKI_ICONS_PLUGIN_ID = "io.unthrottled.doki.icons"
 
 object PluginService : Logging {
   private val objectMapper by lazy { ObjectMapper() }
-
-  fun isMotivatorInstalled(): Boolean =
-    PluginManagerCore.isPluginInstalled(
-      PluginId.getId(MOTIVATOR_PLUGIN_ID),
-    )
 
   fun areIconsInstalled(): Boolean =
     PluginManagerCore.isPluginInstalled(

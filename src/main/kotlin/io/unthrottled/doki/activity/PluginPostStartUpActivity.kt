@@ -10,6 +10,6 @@ class PluginPostStartUpActivity : ProjectActivity {
   }
 
   private fun doStuff(project: Project) {
-    TheDokiTheme.Companion.instance.projectOpened(project)
+    TheDokiTheme.getInstance().projectOpened(project)
   }
 }
