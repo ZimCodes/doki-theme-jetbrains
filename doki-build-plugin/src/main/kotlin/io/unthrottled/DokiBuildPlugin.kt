@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
 enum class ThemeVariant {
-  DARCULA, ISLANDS;
+  DARCULA, ISLANDS,CUSTOM;
 
   val lowercase: String
     get() = this.name.lowercase()

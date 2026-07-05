@@ -114,7 +114,9 @@ abstract class ThemeVariantBuilder : DefaultTask() {
   fun baseJSONTemplates(templatePath: Path): Map<Path, DokiThemeTemplate> =
     Files.walk(templatePath).filter {
       val fileName = it.fileName.toString()
-      Files.isRegularFile(it) && fileName.endsWith("json") && fileName.contains(ThemeVariant.DARCULA.lowercase)
+      Files.isRegularFile(it) && fileName.endsWith("json") && fileName.contains(ThemeVariant.DARCULA.lowercase) && !fileName.contains(
+        ThemeVariant.CUSTOM.lowercase
+      )
     }.asSequence().associateWith { path ->
       Files.newBufferedReader(path).use { reader ->
         CommonConstructionFunctions.gson.fromJson(reader, DokiThemeTemplate::class.java)

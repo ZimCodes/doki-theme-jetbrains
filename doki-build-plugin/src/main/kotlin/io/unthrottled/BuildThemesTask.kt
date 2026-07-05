@@ -23,6 +23,9 @@ import java.nio.file.StandardOpenOption
 import java.util.*
 import java.util.Optional
 import java.util.stream.Collectors
+import kotlin.text.replaceFirstChar
+import kotlin.text.split
+import kotlin.text.startsWith
 
 data class JetbrainsThemeOnlyDefinition(
   val id: String,
@@ -139,15 +142,25 @@ abstract class BuildThemesTask : DefaultTask() {
     writeXmlToFile(resPluginXML.get().asFile.toPath(), parsedPluginXml)
   }
 
-  private fun getVarName(variantName: String) : String = if (variantName == ThemeVariant.DARCULA.lowercase) "" else variantName
-
+  private fun getVarName(variantName: String): String =
+    if (variantName == ThemeVariant.DARCULA.lowercase || variantName.startsWith(ThemeVariant.CUSTOM.lowercase)) "" else variantName
 
 
   private fun writeProductName(pluginXml: Node, variantName: String) {
     val nameNodeList = pluginXml["name"] as NodeList
     val productPostfix = if (isUltimateBuild()) " Ultimate" else ""
     val nameNode = nameNodeList[0] as Node
-    nameNode.setValue("$PLUGIN_NAME$productPostfix ${variantName.replaceFirstChar { it.titlecaseChar() }}")
+    val variantTitleName = when {
+      variantName.startsWith(ThemeVariant.CUSTOM.lowercase) -> {
+        val split = variantName.split("-")
+        val variant = split[0].replaceFirstChar { it.titlecaseChar() }
+        val variantType = split[1].replaceFirstChar { it.titlecaseChar() }
+        "$variant $variantType"
+      }
+
+      else -> variantName.replaceFirstChar { it.titlecaseChar() }
+    }
+    nameNode.setValue("$PLUGIN_NAME$productPostfix $variantTitleName")
     val pluginId = if (isUltimateBuild()) ULTIMATE_PLUGIN_ID else COMMUNITY_PLUGIN_ID
     val idNodeList = pluginXml["id"] as NodeList
     val idNode = idNodeList[0] as Node
@@ -189,6 +202,35 @@ abstract class BuildThemesTask : DefaultTask() {
       }!!
   }
 
+  private fun getResJSONPath(resourceDirectory: Path, dokiName: String, variantName: String, suffix: String): Path =
+    get(
+      resourceDirectory.toString(),
+      "$dokiName${
+        when {
+          variantName == ThemeVariant.DARCULA.lowercase -> ""
+          variantName.startsWith(ThemeVariant.CUSTOM.lowercase) -> {
+            val variantSplit = variantName.split("-".toPattern()) // custom-variant -> [custom,variant]
+            val variantName = variantSplit[0] // custom
+            val variantType = variantSplit[1] // variant
+            ".$variantName.$variantType.$suffix"
+          }
+
+          else -> ".$variantName.$suffix"
+        }
+      }"
+    )
+
+  private fun getThemeName(groupName: String, name: String, variantName: String): String =
+    when {
+      variantName == ThemeVariant.DARCULA.lowercase -> ""
+      variantName.startsWith(ThemeVariant.CUSTOM.lowercase) -> {
+        val split = variantName.split("-".toPattern())
+        "$name ${split[0].replaceFirstChar { it.titlecaseChar() }} ${split[1].replaceFirstChar { it.titlecaseChar() }}"
+      }
+
+      else -> "${getLafNamePrefix(groupName)}${name}${" ${variantName.replaceFirstChar { it.titlecaseChar() }}"}"
+    }
+
   private fun constructIntellijTheme(
     pathMasterAndJetbrainsDefinition: Triple<Path, MasterThemeDefinition, JetbrainsAppDefinition>,
     constructableAssetSupplier: ConstructableAssetSupplier,
@@ -205,16 +247,11 @@ abstract class BuildThemesTask : DefaultTask() {
       createDirectories(resourceDirectory)
     }
 
-    val themeJson = get(
-      resourceDirectory.toString(),
-      "${masterThemeDefinition.usableName}${if (variantName == ThemeVariant.DARCULA.lowercase) "" else ".$variantName"}.theme.json"
-    )
+    val themeJson = getResJSONPath(resourceDirectory, masterThemeDefinition.usableName, variantName, "theme.json")
     deleteIfExists(themeJson)
 
-    val themeMetadataJson = get(
-      resourceDirectory.toString(),
-      "${masterThemeDefinition.usableName}${if (variantName == ThemeVariant.DARCULA.lowercase) "" else ".$variantName"}.theme.meta.json"
-    )
+    val themeMetadataJson =
+      getResJSONPath(resourceDirectory, masterThemeDefinition.usableName, variantName, "theme.meta.json")
     deleteIfExists(themeMetadataJson)
 
     val initialParentTemplateName = if (masterThemeDefinition.dark) "dark" else "light"
@@ -242,8 +279,7 @@ abstract class BuildThemesTask : DefaultTask() {
       )
 
     val colors = validateColors(masterThemeDefinition, resolvedNamedColors)
-    val themeName =
-      "${getLafNamePrefix(masterThemeDefinition.group)}${masterThemeDefinition.name}${if (variantName == ThemeVariant.DARCULA.lowercase) "" else " ${variantName.replaceFirstChar { it.titlecaseChar() }}"}"
+    val themeName = getThemeName(masterThemeDefinition.group, masterThemeDefinition.name, variantName)
     val finalTheme = JetbrainsThemeOnlyDefinition(
       id = masterThemeDefinition.id + getVarName(variantName),
       name = themeName,
