@@ -4,29 +4,28 @@
 
 ## New LAF variant
 
-To create a new LAF variant, you must create a base template located `doki-build-plugin/assets/templates`.
-Then simply run the task `./gradlew genVariantTemplates -Pvariant=<variant-name>`
+To create a new LAF variant:
+- Navigate to `doki-build-plugin/assets/templates`
+- Create a copy of `base.laf.template.json`
+- Rename it to this format: `base.<variant-name>.laf.template.json`
+- Modify the JSON file. See [JSON Format](#json-format)
+- Then simply run the task `./gradlew genVariantTemplates -Pvariant=<variant-name>`
 
-## Requirements
+## JSON Format
 
-- File Name format: `base.<variant-name>.laf.template.json`
-- JSON format:
-  - `type`: "LAF"
-  - `name`: "base <variant-name>"
-  - `ui`:
-    `{ themeMetadata keys: color names (defined in 'masterThemes/definitions/<doki-theme>/master.definition.json' or 'colors key')}`
-  - `icons`: **(Optional)** same as `ui` except focused on icon themeMetadata
-  - `colors`: **(Optional/Not Recommended)** define new color names in place of hexadecimals. Ex: `accentColor: "#ff3165"`
-    I recommend not using this. Use existing `colors` names defined in a doki's `master.definitions.json` file located in
-    `masterThemes/` directory instead.
+This is the schema for creating a LaF template:
+- `type`: "LAF"
+- `name`: "base <variant-name>"
+- `ui`:
+  `{ themeMetadata keys: color names (defined in 'masterThemes/definitions/<doki-theme>/master.definition.json' or 'colors key')}`
+- `icons`: **(Optional)** same as `ui` except focused on icon themeMetadata
+- `colors`: **(Optional/Not Recommended)** define new color names in place of hexadecimals. Ex: `accentColor: "#ff3165"`
+  I recommend not using this. Use existing `colors` names defined in a doki themes `master.definitions.json` file located in
+  `masterThemes/` directory instead.
 
+**NOTE:** The data model for this JSON format is called `AssetTemplateDefinition` located in `Models.kt` of `doki-build-source-jvm/` directory.
 
-The data model for this JSON format is called `AssetTemplateDefinition` located in `Models.kt` of `doki-build-source-jvm/` directory
-
-You can also use `base.laf.template.json` located at `doki-build-plugin/assets/templates`, as an example to build a new template.
-
-**Example**
-
+### Example
 ```json
 {
   "type": "LAF",
@@ -55,5 +54,4 @@ You can also use `base.laf.template.json` located at `doki-build-plugin/assets/t
     "awesomePurple": "#d506ff"
   }
 }
-
 ```

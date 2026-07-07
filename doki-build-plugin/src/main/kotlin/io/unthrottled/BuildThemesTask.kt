@@ -207,14 +207,12 @@ abstract class BuildThemesTask : DefaultTask() {
       resourceDirectory.toString(),
       "$dokiName${
         when {
-          variantName == ThemeVariant.DARCULA.lowercase -> ""
           variantName.startsWith(ThemeVariant.CUSTOM.lowercase) -> {
             val variantSplit = variantName.split("-".toPattern()) // custom-variant -> [custom,variant]
             val variantName = variantSplit[0] // custom
             val variantType = variantSplit[1] // variant
             ".$variantName.$variantType.$suffix"
           }
-
           else -> ".$variantName.$suffix"
         }
       }"
