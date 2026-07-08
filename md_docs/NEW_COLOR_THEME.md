@@ -4,7 +4,7 @@
 > Want to make your own color variant? This is the place!
 
 In order to submit a color scheme, you must provide a proof of concept. Follow the steps below to achieve this.
-If you haven't done already, [setup your development environment](./md_docs/DEV_SETUP.md).
+If you haven't done already, [setup your development environment](./DEV_SETUP.md).
 
 ### Customizing Colors
 
