@@ -62,6 +62,7 @@ class DokiBuildPlugin : Plugin<Project> {
     project.tasks.register<MultiExecTask>("genCustomDokiColorTemplate") {
       description =
         "Generates a doki template based on all newly created custom doki color variant found in 'masterThemes/' folder."
+      dependsOn("compileJava","compileKotlin","generateManifest")
       if (!isDefaultVariant()) {
         dependsOn("genVariantTemplates")
       }

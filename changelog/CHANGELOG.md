@@ -1,7 +1,10 @@
 # Changelog
 ---
 
-## - [Custom Doki Color Theme]
+## 3.1.0 - [Custom Doki Color Theme]
+
+### Added
+- Can now create your own custom doki color theme! See [NEW_COLOR_THEME](../md_docs/NEW_COLOR_THEME.md).
 
 ## 3.0.0 - [Islands Themes Support]
 
