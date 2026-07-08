@@ -16,12 +16,12 @@ import java.util.Optional
 @Service
 class EmptyFrameWallpaperService {
   companion object {
-    val instance: EmptyFrameWallpaperService
-      get() = ApplicationManager.getApplication().getService(EmptyFrameWallpaperService::class.java)
+    fun getInstance(): EmptyFrameWallpaperService =
+      ApplicationManager.getApplication().getService(EmptyFrameWallpaperService::class.java)
   }
 
   fun enableEmptyFrameWallpaper() {
-    ThemeManager.instance.currentTheme.doOrElse({ dokiTheme ->
+    ThemeManager.getInstance().currentTheme.doOrElse({ dokiTheme ->
       installFrameBackgroundImage(dokiTheme)
       repaintWindows()
     }) {
@@ -31,7 +31,7 @@ class EmptyFrameWallpaperService {
 
   fun activateForTheme(dokiTheme: DokiTheme) {
     ApplicationManager.getApplication().executeOnPooledThread {
-      if (ThemeConfig.instance.isEmptyFrameBackground) {
+      if (ThemeConfig.getInstance().isEmptyFrameBackground) {
         installFrameBackgroundImage(dokiTheme)
       }
     }

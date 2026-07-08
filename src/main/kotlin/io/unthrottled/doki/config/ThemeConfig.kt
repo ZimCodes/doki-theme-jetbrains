@@ -1,11 +1,9 @@
 package io.unthrottled.doki.config
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.SerializablePersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.util.xmlb.XmlSerializerUtil.copyBean
-import com.intellij.util.xmlb.XmlSerializerUtil.createCopy
 import io.unthrottled.doki.stickers.CurrentSticker
 import io.unthrottled.doki.stickers.StickerLevel
 import java.util.Locale
@@ -15,57 +13,200 @@ import java.util.Locale
   name = "DokiDokiThemeConfig",
   storages = [Storage("doki_doki_theme.xml")],
 )
-class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
+class ThemeConfig : SerializablePersistentStateComponent<ThemeConfig.ThemeState>(ThemeState()) {
   companion object {
-    val instance: ThemeConfig
-      get() = ApplicationManager.getApplication().getService(ThemeConfig::class.java)
+    fun getInstance(): ThemeConfig = ApplicationManager.getApplication().getService(ThemeConfig::class.java)
   }
 
-  var ignoreScaling: Boolean = false
-  var hideOnHover: Boolean = false
-  var hideDelayMS: Int = 750
-  var savedMargins: String = "{}"
-  var userId: String = ""
-  var isMoveableStickers: Boolean = false
-  var isNotShowReadmeAtStartup: Boolean = false
-  var version: String = "0.0.0"
-  var stickerLevel: String = StickerLevel.ON.name
-  var isFirstTime: Boolean = true
-  var isDokiBackground: Boolean = false
-  var isEmptyFrameBackground: Boolean = true
-  var showThemeStatusBar: Boolean = true
-  var currentStickerName: String = CurrentSticker.DEFAULT.name
-
-  var isGlobalFontSize: Boolean = false
-  var customFontSize: Int = 13
-
-  var isOverrideConsoleFont: Boolean = false
-  var consoleFontName: String = "JetBrains Mono"
-
-  // todo remove this after release has cooked
-  var isMaterialDirectories: Boolean = false
-  var isMaterialFiles: Boolean = false
-  var isMaterialPSIIcons: Boolean = false
-
-  var capStickerDimensions: Boolean = false
-  var maxStickerWidth: Int = -1
-  var maxStickerHeight: Int = -1
-
-  var showSmallStickers: Boolean = false
-  var smallMaxStickerWidth: Int = 100
-  var smallMaxStickerHeight: Int = 100
-
-  var isSeeThroughNotifications: Boolean = false
-  var notificationOpacity: Int = 90
-
-  var discreetMode = false
-  var discreetModeConfig = "{}"
-
-  override fun getState(): ThemeConfig? = createCopy(this)
-
-  override fun loadState(state: ThemeConfig) {
-    copyBean(state, this)
-  }
+  var ignoreScaling: Boolean
+    get() = state.ignoreScaling
+    set(value) {
+      updateState {
+        it.copy(ignoreScaling = value)
+      }
+    }
+  var hideOnHover: Boolean
+    get() = state.hideOnHover
+    set(value) {
+      updateState {
+        it.copy(hideOnHover = value)
+      }
+    }
+  var hideDelayMS: Int
+    get() = state.hideDelayMS
+    set(value) {
+      updateState {
+        it.copy(hideDelayMS = value)
+      }
+    }
+  var savedMargins: String
+    get() = state.savedMargins
+    set(value) {
+      updateState {
+        it.copy(savedMargins = value)
+      }
+    }
+  var userId: String
+    get() = state.userId
+    set(value) {
+      updateState {
+        it.copy(userId = value)
+      }
+    }
+  var isMoveableStickers: Boolean
+    get() = state.isMoveableStickers
+    set(value) {
+      updateState {
+        it.copy(isMoveableStickers = value)
+      }
+    }
+  var isNotShowReadmeAtStartup: Boolean
+    get() = state.isNotShowReadmeAtStartup
+    set(value) {
+      updateState {
+        it.copy(isNotShowReadmeAtStartup = value)
+      }
+    }
+  var version: String
+    get() = state.version
+    set(value) {
+      updateState {
+        it.copy(version = value)
+      }
+    }
+  var stickerLevel: String
+    get() = state.stickerLevel
+    set(value) {
+      updateState {
+        it.copy(stickerLevel = value)
+      }
+    }
+  var isDokiBackground: Boolean
+    get() = state.isDokiBackground
+    set(value) {
+      updateState {
+        it.copy(isDokiBackground = value)
+      }
+    }
+  var isEmptyFrameBackground: Boolean
+    get() = state.isEmptyFrameBackground
+    set(value) {
+      updateState {
+        it.copy(isEmptyFrameBackground = value)
+      }
+    }
+  var showThemeStatusBar: Boolean
+    get() = state.showThemeStatusBar
+    set(value) {
+      updateState {
+        it.copy(showThemeStatusBar = value)
+      }
+    }
+  var currentStickerName: String
+    get() = state.currentStickerName
+    set(value) {
+      updateState {
+        it.copy(currentStickerName = value)
+      }
+    }
+  var isGlobalFontSize: Boolean
+    get() = state.isGlobalFontSize
+    set(value) {
+      updateState {
+        it.copy(isGlobalFontSize = value)
+      }
+    }
+  var customFontSize: Int
+    get() = state.customFontSize
+    set(value) {
+      updateState {
+        it.copy(customFontSize = value)
+      }
+    }
+  var isOverrideConsoleFont: Boolean
+    get() = state.isOverrideConsoleFont
+    set(value) {
+      updateState {
+        it.copy(isOverrideConsoleFont = value)
+      }
+    }
+  var consoleFontName: String
+    get() = state.consoleFontName
+    set(value) {
+      updateState {
+        it.copy(consoleFontName = value)
+      }
+    }
+  var capStickerDimensions: Boolean
+    get() = state.capStickerDimensions
+    set(value) {
+      updateState {
+        it.copy(capStickerDimensions = value)
+      }
+    }
+  var maxStickerWidth: Int
+    get() = state.maxStickerWidth
+    set(value) {
+      updateState {
+        it.copy(maxStickerWidth = value)
+      }
+    }
+  var maxStickerHeight: Int
+    get() = state.maxStickerHeight
+    set(value) {
+      updateState {
+        it.copy(maxStickerHeight = value)
+      }
+    }
+  var showSmallStickers: Boolean
+    get() = state.showSmallStickers
+    set(value) {
+      updateState {
+        it.copy(showSmallStickers = value)
+      }
+    }
+  var smallMaxStickerWidth: Int
+    get() = state.smallMaxStickerWidth
+    set(value) {
+      updateState {
+        it.copy(smallMaxStickerWidth = value)
+      }
+    }
+  var smallMaxStickerHeight: Int
+    get() = state.smallMaxStickerHeight
+    set(value) {
+      updateState {
+        it.copy(smallMaxStickerHeight = value)
+      }
+    }
+  var isSeeThroughNotifications: Boolean
+    get() = state.isSeeThroughNotifications
+    set(value) {
+      updateState {
+        it.copy(isSeeThroughNotifications = value)
+      }
+    }
+  var notificationOpacity: Int
+    get() = state.notificationOpacity
+    set(value) {
+      updateState {
+        it.copy(notificationOpacity = value)
+      }
+    }
+  var discreetMode: Boolean
+    get() = state.discreetMode
+    set(value) {
+      updateState {
+        it.copy(discreetMode = value)
+      }
+    }
+  var discreetModeConfig: String
+    get() = state.discreetModeConfig
+    set(value) {
+      updateState {
+        it.copy(discreetModeConfig = value)
+      }
+    }
 
   var currentSticker: CurrentSticker
     get() {
@@ -93,4 +234,34 @@ class ThemeConfig : PersistentStateComponent<ThemeConfig>, Cloneable {
         StickerLevel.valueOf(theStickerLevel)
       }
     }
+
+  data class ThemeState(
+    var ignoreScaling: Boolean = false,
+    var hideOnHover: Boolean = false,
+    var hideDelayMS: Int = 750,
+    var savedMargins: String = "{}",
+    var userId: String = "",
+    var isMoveableStickers: Boolean = false,
+    var isNotShowReadmeAtStartup: Boolean = false,
+    var version: String = "0.0.0",
+    var stickerLevel: String = StickerLevel.ON.name,
+    var isDokiBackground: Boolean = false,
+    var isEmptyFrameBackground: Boolean = true,
+    var showThemeStatusBar: Boolean = true,
+    var currentStickerName: String = CurrentSticker.DEFAULT.name,
+    var isGlobalFontSize: Boolean = false,
+    var customFontSize: Int = 13,
+    var isOverrideConsoleFont: Boolean = false,
+    var consoleFontName: String = "JetBrains Mono",
+    var capStickerDimensions: Boolean = false,
+    var maxStickerWidth: Int = -1,
+    var maxStickerHeight: Int = -1,
+    var showSmallStickers: Boolean = false,
+    var smallMaxStickerWidth: Int = 100,
+    var smallMaxStickerHeight: Int = 100,
+    var isSeeThroughNotifications: Boolean = false,
+    var notificationOpacity: Int = 90,
+    var discreetMode: Boolean = false,
+    var discreetModeConfig: String = "{}",
+  )
 }

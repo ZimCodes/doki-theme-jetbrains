@@ -197,7 +197,7 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
     discreetModeCheckBox.setSelected(initialThemeSettingsModel.getDiscreetMode());
     discreetModeCheckBox.addActionListener(e -> {
         themeSettingsModel.setDiscreetMode(discreetModeCheckBox.isSelected());
-        toggleDiscreetModeStuff(discreetModeCheckBox.isSelected());
+        toggleDiscreetMode(discreetModeCheckBox.isSelected());
       }
     );
 
@@ -302,7 +302,7 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
     });
     marginHelp.setForeground(UIUtil.getContextHelpForeground());
 
-    toggleDiscreetModeStuff(initialThemeSettingsModel.getDiscreetMode());
+    toggleDiscreetMode(initialThemeSettingsModel.getDiscreetMode());
 
     hideOnHoverCheck.setSelected(initialThemeSettingsModel.getHideOnHover());
     hideOnHoverCheck.addActionListener(e -> {
@@ -333,40 +333,31 @@ public class ThemeSettingsUI implements SearchableConfigurable, Configurable.NoS
     // font is loaded, it's assumed the combo box is loaded.
     app.executeOnPooledThread(() -> {
       FontInfo initialFont = FontInfo.get(initialThemeSettingsModel.getConsoleFontValue());
-      consoleFontWomboComboBox.setSelectedItem(initialFont);
+      ApplicationManager.getApplication().invokeLater(() -> consoleFontWomboComboBox.setSelectedItem(initialFont));// Event Dispatch Thread
     });
   }
 
-  private void toggleDiscreetModeStuff(boolean discreetModeOn) {
-    showStickerCheckBox.setEnabled(!discreetModeOn);
-    ignoreScalingCheckBox.setEnabled(!discreetModeOn);
-    allowPositioningCheckBox.setEnabled(!discreetModeOn);
-    chooseImageButton.setEnabled(!discreetModeOn);
-    useCustomStickerCheckBox.setEnabled(!discreetModeOn);
-    resetStickerMarginsButton.setEnabled(!discreetModeOn);
-    primaryRadioButton.setEnabled(!discreetModeOn);
-    secondaryRadioButton.setEnabled(!discreetModeOn);
-    enableDimensionCappingCheckBox.setEnabled(!discreetModeOn);
-    enableSmallStickers.setEnabled(!discreetModeOn);
-    maxHeightSpinner.setEnabled(!discreetModeOn);
-    maxWidthSpinner.setEnabled(!discreetModeOn);
-    smolMaxHeightSpinner.setEnabled(!discreetModeOn);
-    smolMaxWidthSpinner.setEnabled(!discreetModeOn);
-    backgroundWallpaperCheckBox.setEnabled(!discreetModeOn);
-    emptyEditorBackgroundCheckBox.setEnabled(!discreetModeOn);
-    nameInStatusBarCheckBox.setEnabled(!discreetModeOn);
-    notificationOpacitySlider.setEnabled(!discreetModeOn);
-    makeNotificationsTransparentCheckBox.setEnabled(!discreetModeOn);
+  private void setEnabled(boolean isEnabled, JComponent... jComponents) {
+    for (JComponent component : jComponents) {
+      component.setEnabled(isEnabled);
+    }
+  }
+
+  private void toggleDiscreetMode(boolean discreetModeOn) {
+    setEnabled(!discreetModeOn,
+      showStickerCheckBox, ignoreScalingCheckBox, allowPositioningCheckBox, chooseImageButton, useCustomStickerCheckBox,
+      resetStickerMarginsButton, primaryRadioButton, secondaryRadioButton, enableDimensionCappingCheckBox, enableSmallStickers,
+      maxHeightSpinner, maxWidthSpinner, smolMaxHeightSpinner, smolMaxWidthSpinner, backgroundWallpaperCheckBox, emptyEditorBackgroundCheckBox,
+      nameInStatusBarCheckBox, notificationOpacitySlider, makeNotificationsTransparentCheckBox
+    );
   }
 
   private void updatePrimaryStickerDimensionCapComponents() {
-    maxHeightSpinner.setEnabled(enableDimensionCappingCheckBox.isSelected());
-    maxWidthSpinner.setEnabled(enableDimensionCappingCheckBox.isSelected());
+    setEnabled(enableDimensionCappingCheckBox.isSelected(), maxHeightSpinner, maxWidthSpinner);
   }
 
   private void updateSmolStickerDimensionCapComponents() {
-    smolMaxHeightSpinner.setEnabled(enableSmallStickers.isSelected());
-    smolMaxWidthSpinner.setEnabled(enableSmallStickers.isSelected());
+    setEnabled(enableSmallStickers.isSelected(), smolMaxHeightSpinner, smolMaxWidthSpinner);
   }
 
 

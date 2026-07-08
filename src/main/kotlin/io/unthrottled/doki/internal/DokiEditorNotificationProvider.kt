@@ -15,9 +15,9 @@ class DokiEditorNotificationProvider : EditorNotificationProvider {
 
     val panel = EditorNotificationPanel(fileEditor)
     panel.text("This is a test, bro")
-    panel.createActionLabel("Link One") {
+    panel.createActionLabel("Link one") {
     }
-    panel.createActionLabel("Link Two") {
+    panel.createActionLabel("Link two") {
     }
     return panel
   }

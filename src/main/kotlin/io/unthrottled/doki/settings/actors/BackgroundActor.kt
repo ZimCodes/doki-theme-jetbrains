@@ -5,12 +5,12 @@ import io.unthrottled.doki.stickers.EditorBackgroundWallpaperService
 
 object BackgroundActor {
   fun handleBackgroundUpdate(enabled: Boolean) {
-    if (enabled != ThemeConfig.instance.isDokiBackground) {
-      ThemeConfig.instance.isDokiBackground = enabled
+    if (enabled != ThemeConfig.getInstance().isDokiBackground) {
+      ThemeConfig.getInstance().isDokiBackground = enabled
       if (enabled) {
-        EditorBackgroundWallpaperService.instance.enableEditorBackground()
+        EditorBackgroundWallpaperService.getInstance().enableEditorBackground()
       } else {
-        EditorBackgroundWallpaperService.instance.removeEditorBackground()
+        EditorBackgroundWallpaperService.getInstance().removeEditorBackground()
       }
     }
   }

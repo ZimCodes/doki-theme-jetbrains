@@ -54,6 +54,7 @@ import javax.swing.JLayeredPane
 import javax.swing.JPanel
 import javax.swing.MenuElement
 import javax.swing.SwingUtilities
+import kotlin.time.Duration.Companion.milliseconds
 
 enum class StickerType {
   REGULAR,
@@ -79,7 +80,7 @@ internal class StickerPane(
 ) : HwFacadeJPanel(), Disposable, Logging {
   private lateinit var stickerContent: JPanel
 
-  var ignoreScaling = ThemeConfig.instance.ignoreScaling
+  var ignoreScaling = ThemeConfig.getInstance().ignoreScaling
     set(value) {
       field = value
       if (value) {
@@ -94,14 +95,14 @@ internal class StickerPane(
     }
 
   internal var hideConfig: StickerHideConfig =
-    StickerHideConfig(ThemeConfig.instance.hideOnHover, ThemeConfig.instance.hideDelayMS)
+    StickerHideConfig(ThemeConfig.getInstance().hideOnHover, ThemeConfig.getInstance().hideDelayMS)
 
   private val isSmol = StickerType.SMOL == type
   private var positionable: Boolean =
     if (isSmol) {
       true
     } else {
-      ThemeConfig.instance.isMoveableStickers
+      ThemeConfig.getInstance().isMoveableStickers
     }
 
   fun setPositionable(shouldPosition: Boolean) {
@@ -143,7 +144,7 @@ internal class StickerPane(
         }
         doubleClickResetJob?.cancel()
         doubleClickResetJob = coroutineScope.launch(Dispatchers.Default) {
-          delay(250)
+          delay(250.milliseconds)
           SwingUtilities.invokeLater { clickCount = 0 }
         }
       }
@@ -214,7 +215,7 @@ internal class StickerPane(
             hoveredInside = true
             hoverJob?.cancel()
             hoverJob = coroutineScope.launch(Dispatchers.Default) {
-              delay(this@StickerPane.hideConfig.hideDelayMS.toLong())
+              delay(this@StickerPane.hideConfig.hideDelayMS.toLong().milliseconds)
               SwingUtilities.invokeLater {
                 runFadeAnimation(runForwards = false)
                 if (positionable) {
@@ -231,7 +232,7 @@ internal class StickerPane(
           if (!stickerShowing && !makingStickerReAppear) {
             makingStickerReAppear = true
             hoverJob = coroutineScope.launch(Dispatchers.Default) {
-              delay(FADE_IN_DELAY.toLong())
+              delay(FADE_IN_DELAY.toLong().milliseconds)
               SwingUtilities.invokeLater {
                 makingStickerReAppear = false
                 hoveredInside = false
@@ -460,22 +461,22 @@ internal class StickerPane(
 
   private fun getUsableStickerDimension(stickerUrl: String): Dimension {
     val originalDimension = getImageDimensions(stickerUrl)
-    return when {
-      type == StickerType.SMOL ->
+    return when (type) {
+      StickerType.SMOL ->
         DimensionCappingService.getCappingStyle(
           originalDimension,
           Dimension(
-            ThemeConfig.instance.smallMaxStickerWidth,
-            ThemeConfig.instance.smallMaxStickerHeight,
+            ThemeConfig.getInstance().smallMaxStickerWidth,
+            ThemeConfig.getInstance().smallMaxStickerHeight,
           ),
         )
 
-      type == StickerType.REGULAR && ThemeConfig.instance.capStickerDimensions ->
+      StickerType.REGULAR if ThemeConfig.getInstance().capStickerDimensions ->
         DimensionCappingService.getCappingStyle(
           originalDimension,
           Dimension(
-            ThemeConfig.instance.maxStickerWidth,
-            ThemeConfig.instance.maxStickerHeight,
+            ThemeConfig.getInstance().maxStickerWidth,
+            ThemeConfig.getInstance().maxStickerHeight,
           ),
         )
 

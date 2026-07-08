@@ -8,8 +8,8 @@ object SeeThroughNotificationsActor {
     enabled: Boolean,
     notificationOpacity: Int,
   ) {
-    ThemeConfig.instance.isSeeThroughNotifications = enabled
-    ThemeConfig.instance.notificationOpacity = notificationOpacity
+    ThemeConfig.getInstance().isSeeThroughNotifications = enabled
+    ThemeConfig.getInstance().notificationOpacity = notificationOpacity
     GlassNotificationService.makeNotificationSeeThrough()
   }
 }

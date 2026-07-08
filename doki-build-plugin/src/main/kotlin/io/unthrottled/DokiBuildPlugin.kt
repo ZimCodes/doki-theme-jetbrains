@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
 enum class ThemeVariant {
-  DARCULA, ISLANDS;
+  DARCULA, ISLANDS, CUSTOM;
 
   val lowercase: String
     get() = this.name.lowercase()
@@ -15,8 +15,19 @@ enum class ThemeVariant {
 class DokiBuildPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     val variant: String = project.findProperty("variant") as String? ?: ThemeVariant.DARCULA.lowercase
-    fun isDefaultVariant(): Boolean = !project.hasProperty("variant") || variant == ThemeVariant.DARCULA.lowercase
+    fun isDefaultVariant(): Boolean =
+      !project.hasProperty("variant") || variant.contains(ThemeVariant.DARCULA.lowercase)
+    fun isCustomVariant(): Boolean = variant.startsWith("custom")
+    // Removes 'custom-' from 'custom-<variant>'
+    fun cutPrefix(variantName: String?): String = variantName?.replaceFirst("[a-z]+-".toRegex(), "") ?: ""
+
+    // -Pvariant=islands / -Pvariant=custom-darcula
     project.tasks.register<BuildThemesTask>("buildThemes") {
+      if (isCustomVariant()) {
+        dependsOn("genCustomDokiColorTemplate")
+      } else if (!isDefaultVariant()) {
+        dependsOn("genVariantTemplates")
+      }
       variantName.set(variant)
       buildSourceAssetDirectory.set(project.layout.projectDirectory.dir("doki-build-plugin/assets"))
       masterThemesDirectory.set(project.layout.projectDirectory.dir("masterThemes"))
@@ -33,8 +44,9 @@ class DokiBuildPlugin : Plugin<Project> {
       }
       dependsOn("genVariantBaseTemplates")
       description = "Generates variant templates of each doki theme using darcula templates as the base."
-      variantName.set(variant)
-      val capitalName: String = variant.replaceFirstChar { it.titlecaseChar() }
+      val noPrefixVariant = cutPrefix(variant)
+      variantName.set(noPrefixVariant)
+      val capitalName: String = noPrefixVariant.replaceFirstChar { it.titlecaseChar() }
       darkParentTheme?.set("$capitalName Dark")
       lightParentTheme?.set("$capitalName Light")
     }
@@ -44,16 +56,18 @@ class DokiBuildPlugin : Plugin<Project> {
         throw IllegalArgumentException("You have must specify a non-darcula variant: '--project-prop=<variant>'")
       }
       description = "Generates base starter templates for a variant using darcula's base templates as a guide."
-      variantName.set(variant)
+      variantName.set(cutPrefix(variant))
     }
     // NOTE: To generate a variant: gradlew genVariantBaseTemplates -Pvariant=islands
     project.tasks.register<MultiExecTask>("genCustomDokiColorTemplate") {
       description =
         "Generates a doki template based on all newly created custom doki color variant found in 'masterThemes/' folder."
+      dependsOn("compileJava","compileKotlin","generateManifest")
       if (!isDefaultVariant()) {
         dependsOn("genVariantTemplates")
       }
-      val generateCmd = "yarn generateCustomJetbrainsTemplate${if (variant == null) "" else " $variant"}"
+      val generateCmd =
+        "yarn generateCustomJetbrainsTemplate${if (variant == null) "" else " ${if (isCustomVariant()) cutPrefix(variant) else variant}"}"
       commandExecMap.put(
         MultiExecTask.OSType.AUTO, listOf(
           "cd masterThemes",

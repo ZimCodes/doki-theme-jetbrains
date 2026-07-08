@@ -29,7 +29,7 @@ object EXPUIFixer : LafManagerListener, Disposable {
     }
 
     ApplicationManager.getApplication().invokeLater {
-      ThemeManager.instance.currentTheme.ifPresent { dokiTheme ->
+      ThemeManager.getInstance().currentTheme.ifPresent { dokiTheme ->
         val defaults = UIManager.getDefaults()
         setUIProperty("ToolWindow.Button.selectedBackground", dokiTheme.getColor("highlightColor"), defaults)
         setUIProperty("ToolWindow.Button.selectedForeground", dokiTheme.getColor("iconAccent"), defaults)

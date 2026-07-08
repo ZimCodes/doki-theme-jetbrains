@@ -23,13 +23,13 @@ private const val PREVIOUS_BACKGROUND = "io.unthrottled.doki.previous-background
 @Suppress("TooManyFunctions") // cuz I said so
 internal class EditorBackgroundWallpaperService {
   companion object {
-    val instance: EditorBackgroundWallpaperService
-      get() = ApplicationManager.getApplication().getService(EditorBackgroundWallpaperService::class.java)
+    fun getInstance(): EditorBackgroundWallpaperService =
+      ApplicationManager.getApplication().getService(EditorBackgroundWallpaperService::class.java)
   }
 
   fun activateForTheme(dokiTheme: DokiTheme) {
     ApplicationManager.getApplication().executeOnPooledThread {
-      if (ThemeConfig.instance.isDokiBackground) {
+      if (ThemeConfig.getInstance().isDokiBackground) {
         installEditorBackgroundImage(dokiTheme)
       }
     }
@@ -59,7 +59,7 @@ internal class EditorBackgroundWallpaperService {
           EDITOR_PROP,
         )
       }) {
-        if (getNonDokiBackground().isPresent().not()) { // y u no like isEmpty() ???
+        if (getNonDokiBackground().isPresent.not()) { // y u no like isEmpty() ???
           remove()
         }
       }
@@ -121,7 +121,7 @@ internal class EditorBackgroundWallpaperService {
   }
 
   fun enableEditorBackground() {
-    ThemeManager.instance.currentTheme.ifPresent { dokiTheme ->
+    ThemeManager.getInstance().currentTheme.ifPresent { dokiTheme ->
       installEditorBackgroundImage(dokiTheme)
       repaintWindows()
     }
@@ -135,7 +135,7 @@ internal fun setBackgroundImageProperty(
   anchor: String,
   propertyKey: String,
 ) {
-  // org.intellij.images.editor.actions.SetBackgroundImageDialog has all of the answers
+  // org.intellij.images.editor.actions.SetBackgroundImageDialog has all the answers
   // as to why this looks this way
   val propertyValue =
     listOf(imagePath, opacity, fill, anchor)
