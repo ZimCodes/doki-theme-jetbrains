@@ -1,5 +1,12 @@
 # Changelog
 ---
+## 3.1.1 - [Islands Update]
+
+### Updated 
+- Update main window background to a `1:20:1` contrast ratio for all doki islands themes.
+
+### Fixed
+- Fix: statusbar text is very hard to see on a few themes.
 
 ## 3.1.0 - [Custom Doki Color Theme]
 
