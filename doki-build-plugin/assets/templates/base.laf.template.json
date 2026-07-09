@@ -52,6 +52,7 @@
     "SpeedSearch.background": "contrastColor",
     "SpeedSearch.borderColor": "contrastColor",
     "ToolTip.background": "contrastColor",
+    "ToolTip.foreground": "foregroundColor",
     "Canvas.Tooltip.background": "contrastColor",
     "ToolTip.borderColor": "borderColor",
     "Plugins.borderColor": "borderColor",

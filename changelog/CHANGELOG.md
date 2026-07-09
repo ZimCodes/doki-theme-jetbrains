@@ -1,5 +1,16 @@
 # Changelog
 ---
+## 3.1.1 - [Islands Update]
+
+### Updated 
+- Update main window background to a `1:20:1` contrast ratio for all doki islands themes.
+- (Islands) Increase border width 
+- Updates background of Status bar
+
+### Fixed
+- (Darcula) Fix: theme names showing blanks for all doki themes
+- (Islands) Fix: Active editor tabs in islands not following doki theme coloration
+- Fix: Tooltip text being unreadable on current tooltip background
 
 ## 3.1.0 - [Custom Doki Color Theme]
 

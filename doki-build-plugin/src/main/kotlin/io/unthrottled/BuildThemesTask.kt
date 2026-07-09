@@ -220,7 +220,6 @@ abstract class BuildThemesTask : DefaultTask() {
 
   private fun getThemeName(groupName: String, name: String, variantName: String): String =
     when {
-      variantName == ThemeVariant.DARCULA.lowercase -> ""
       variantName.startsWith(ThemeVariant.CUSTOM.lowercase) -> {
         val split = variantName.split("-".toPattern())
         "$name ${split[0].replaceFirstChar { it.titlecaseChar() }} ${split[1].replaceFirstChar { it.titlecaseChar() }}"
