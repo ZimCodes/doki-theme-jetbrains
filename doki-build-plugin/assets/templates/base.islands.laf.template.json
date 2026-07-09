@@ -10,10 +10,11 @@
     "MainToolbar.background": "mainWindowBackground",
     "Island.borderColor": "headerColor",
     "Island.arc": 22,
-    "Island.borderWidth": 5,
+    "Island.borderWidth": 6,
     "EditorTabs.underlinedBorderColor": "accentColor",
     "EditorTabs.inactiveUnderlinedTabBorderColor": "accentColorLessTransparent",
     "EditorTabs.inactiveUnderlinedTabBackground": "highlightColor",
+    "EditorTabs.underlinedTabBackground": "highlightColor",
     "EditorTabs.background": "headerColor",
     "StatusBar.background": "mainWindowBackground"
   }
