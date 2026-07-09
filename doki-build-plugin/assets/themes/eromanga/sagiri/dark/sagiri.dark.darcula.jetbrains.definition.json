@@ -9,6 +9,7 @@
     "TextField.selectionBackground": "identifierHighlight",
     "TextArea.selectionBackground": "identifierHighlight",
     "TextPane.selectionBackground": "identifierHighlight",
-    "FormattedTextField.selectionBackground": "identifierHighlight"
+    "FormattedTextField.selectionBackground": "identifierHighlight",
+    "StatusBar.Breadcrumbs.foreground": "statusbarForeground"
   }
 }
