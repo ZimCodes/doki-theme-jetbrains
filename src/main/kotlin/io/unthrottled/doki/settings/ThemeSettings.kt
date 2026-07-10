@@ -16,44 +16,12 @@ import io.unthrottled.doki.settings.actors.StickerActor
 import io.unthrottled.doki.settings.actors.SeeThroughNotificationsActor
 import io.unthrottled.doki.settings.actors.StickerHideActor
 import io.unthrottled.doki.settings.actors.ThemeStatusBarActor
-import io.unthrottled.doki.stickers.CurrentSticker
 import io.unthrottled.doki.stickers.CustomStickerService
 import io.unthrottled.doki.stickers.StickerLevel
 import io.unthrottled.doki.themes.ThemeManager
 import java.net.URI
 import java.util.Vector
 import javax.swing.DefaultComboBoxModel
-
-data class ThemeSettingsModel(
-  var areStickersEnabled: Boolean,
-  var currentTheme: String,
-  var showThemeStatusBar: Boolean,
-  var currentSticker: CurrentSticker,
-  var isNotShowReadmeAtStartup: Boolean,
-  var isMoveableStickers: Boolean,
-  var isDokiBackground: Boolean,
-  var discreetMode: Boolean,
-  var isEmptyFrameBackground: Boolean,
-  var isCustomSticker: Boolean,
-  var customStickerPath: String,
-  var isCustomFontSize: Boolean,
-  var customFontSizeValue: Int,
-  var isOverrideConsoleFont: Boolean,
-  var capStickerDimensions: Boolean,
-  var maxStickerHeight: Int,
-  var maxStickerWidth: Int,
-  var showSmallStickers: Boolean,
-  var smallMaxStickerHeight: Int,
-  var smallMaxStickerWidth: Int,
-  var consoleFontValue: String,
-  var ignoreScaling: Boolean,
-  var hideOnHover: Boolean,
-  var hideDelayMS: Int,
-  var isSeeThroughNotifications: Boolean,
-  var notificationOpacity: Int,
-) {
-  fun duplicate(): ThemeSettingsModel = copy()
-}
 
 object ThemeSettings {
   const val SETTINGS_ID = "io.unthrottled.doki.settings.ThemeSettings"
