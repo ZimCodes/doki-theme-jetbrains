@@ -18,6 +18,7 @@ import io.unthrottled.doki.settings.actors.StickerHideActor
 import io.unthrottled.doki.settings.actors.ThemeStatusBarActor
 import io.unthrottled.doki.stickers.CustomStickerService
 import io.unthrottled.doki.stickers.StickerLevel
+import io.unthrottled.doki.stickers.StickerPaneService
 import io.unthrottled.doki.themes.ThemeManager
 import java.net.URI
 import java.util.Vector
@@ -104,6 +105,10 @@ object ThemeSettings {
     ApplicationManager.getApplication().messageBus.syncPublisher(
       THEME_CONFIG_TOPIC,
     ).themeConfigUpdated(ThemeConfig.getInstance())
+  }
+
+  fun resetStickerPosition() {
+    StickerPaneService.getInstance().resetMargins();
   }
 
   fun createThemeComboBoxModel(settingsSupplier: () -> ThemeSettingsModel): ComboBox<String> {
