@@ -2,12 +2,14 @@ package io.unthrottled.doki.config
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.SerializablePersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import io.unthrottled.doki.stickers.CurrentSticker
 import io.unthrottled.doki.stickers.StickerLevel
 import java.util.Locale
 
+@Service
 @OptIn(ExperimentalStdlibApi::class)
 @State(
   name = "DokiDokiThemeConfig",

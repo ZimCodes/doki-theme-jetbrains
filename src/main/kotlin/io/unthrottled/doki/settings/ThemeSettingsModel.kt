@@ -29,6 +29,4 @@ data class ThemeSettingsModel(
   var hideDelayMS: Int,
   var isSeeThroughNotifications: Boolean,
   var notificationOpacity: Int,
-) {
-  fun duplicate(): ThemeSettingsModel = copy()
-}
+)

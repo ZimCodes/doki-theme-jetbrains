@@ -14,8 +14,6 @@ import io.unthrottled.doki.util.Logging
 import io.unthrottled.doki.util.logger
 import io.unthrottled.doki.util.toOptional
 
-const val MOTIVATOR_PLUGIN_ID = "zd.zero.waifu-motivator-plugin"
-const val RANDOMIZER_PLUGIN_ID = "io.unthrottled.theme.randomizer"
 const val DOKI_ICONS_PLUGIN_ID = "io.unthrottled.doki.icons"
 
 object PluginService : Logging {
@@ -24,11 +22,6 @@ object PluginService : Logging {
   fun areIconsInstalled(): Boolean =
     PluginManagerCore.isPluginInstalled(
       PluginId.getId(DOKI_ICONS_PLUGIN_ID),
-    )
-
-  fun isRandomizerInstalled(): Boolean =
-    PluginManagerCore.isPluginInstalled(
-      PluginId.getId(RANDOMIZER_PLUGIN_ID),
     )
 
   private val PLUGIN_MANAGER_URL by lazy {
