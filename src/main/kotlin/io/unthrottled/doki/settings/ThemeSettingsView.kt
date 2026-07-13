@@ -1,7 +1,6 @@
 package io.unthrottled.doki.settings
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
-import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.DialogPanel
@@ -16,14 +15,15 @@ import io.unthrottled.doki.stickers.CurrentSticker
 import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 
-// TODO: Settings page not applying changes. Apply button not enabling after a settings change.
 class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.createThemeSettingsModel()) :
-  SearchableConfigurable, Configurable.NoScroll, DumbAware {
+  SearchableConfigurable, DumbAware {
   private lateinit var discreetCheckBox: Cell<JBCheckBox>
   private lateinit var hideCheckbox: Cell<JBCheckBox>
   private lateinit var dimensionCheckbox: Cell<JBCheckBox>
   private lateinit var smallStickerCheckBox: Cell<JBCheckBox>
-  private lateinit var mainPanel: DialogPanel
+  private lateinit var generalPanel: DialogPanel
+  private lateinit var stickerPanel: DialogPanel
+  private lateinit var fontPanel: DialogPanel
   override fun getDisplayName(): @NlsContexts.ConfigurableName String = ThemeSettings.THEME_SETTINGS_DISPLAY_NAME
   override fun getId(): @NonNls String = ThemeSettings.SETTINGS_ID
 
@@ -81,20 +81,6 @@ class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.cr
           }
         }
         group(MessageBundle.message("settings.border.title.sticker.image")) {
-          row {
-            val customStickerCheckBox =
-              checkBox(MessageBundle.message("settings.checkbox.use.custom.sticker")).bindSelected(model::isCustomSticker)
-            @Suppress("UnstableApiUsage")
-            textFieldWithBrowseButton(
-              fileChooserDescriptor = FileChooserDescriptorFactory.singleFile(),
-              project = null
-            ) { virtualFile ->
-              virtualFile.path
-            }
-              .bindText(model::customStickerPath)
-              .resizableColumn()
-              .enabledIf(customStickerCheckBox.selected)
-          }
           buttonsGroup(MessageBundle.message("settings.label.content.type")) {
             row {
               radioButton(MessageBundle.message("settings.radio.primary"), CurrentSticker.SECONDARY)
@@ -103,6 +89,22 @@ class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.cr
               radioButton(MessageBundle.message("settings.radio.secondary"), CurrentSticker.DEFAULT)
             }
           }.bind(model::currentSticker)
+          group("Custom") {
+            row {
+              val customStickerCheckBox =
+                checkBox(MessageBundle.message("settings.checkbox.use.custom.sticker")).bindSelected(model::isCustomSticker)
+              @Suppress("UnstableApiUsage")
+              textFieldWithBrowseButton(
+                fileChooserDescriptor = FileChooserDescriptorFactory.singleFile(),
+                project = null
+              ) { virtualFile ->
+                virtualFile.path
+              }
+                .bindText(model::customStickerPath)
+                .resizableColumn()
+                .enabledIf(customStickerCheckBox.selected)
+            }
+          }
         }
         group(MessageBundle.message("settings.border.title.visibility")) {
           row {
@@ -170,28 +172,36 @@ class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.cr
 
   private fun createTabs(): JBTabbedPane {
     val tabs = JBTabbedPane()
+    generalPanel = createGeneralPanel()
+    stickerPanel = createStickerPanel()
+    fontPanel = createFontPanel()
     with(tabs) {
-      this.addTab(MessageBundle.message("settings.tab.general"), createGeneralPanel())
-      this.addTab(MessageBundle.message("settings.tab.sticker"), createStickerPanel())
-      this.addTab(MessageBundle.message("settings.tab.font"), createFontPanel())
+      this.addTab(MessageBundle.message("settings.tab.general"), generalPanel)
+      this.addTab(MessageBundle.message("settings.tab.sticker"), stickerPanel)
+      this.addTab(MessageBundle.message("settings.tab.font"), fontPanel)
     }
     return tabs
   }
 
   override fun createComponent(): JComponent {
-    mainPanel = panel {
+    return panel {
       row {
         cell(createTabs())
       }
     }
-    return mainPanel
   }
 
-  override fun isModified(): Boolean = mainPanel.isModified()
+  override fun isModified(): Boolean = generalPanel.isModified() || stickerPanel.isModified() || fontPanel.isModified()
   override fun apply() {
-    mainPanel.apply()
+    generalPanel.apply()
+    stickerPanel.apply()
+    fontPanel.apply()
     ThemeSettings.apply(model)
   }
 
-  override fun reset() = mainPanel.reset()
+  override fun reset() {
+    generalPanel.reset()
+    stickerPanel.reset()
+    fontPanel.reset()
+  }
 }

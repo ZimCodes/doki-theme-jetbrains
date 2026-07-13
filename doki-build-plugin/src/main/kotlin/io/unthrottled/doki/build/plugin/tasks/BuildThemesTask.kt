@@ -1,4 +1,4 @@
-package io.unthrottled.doki.build.plugin
+package io.unthrottled.doki.build.plugin.tasks
 
 import groovy.util.Node
 import groovy.util.NodeList
@@ -8,6 +8,12 @@ import io.unthrottled.doki.build.jvm.tools.BuildFunctions.combineMaps
 import io.unthrottled.doki.build.jvm.tools.ColorTools.isColorCode
 import io.unthrottled.doki.build.jvm.tools.GroupToNameMapping.getLafNamePrefix
 import io.unthrottled.doki.build.jvm.tools.PathTools.cleanDirectory
+import io.unthrottled.doki.build.plugin.ThemeVariant
+import io.unthrottled.doki.build.plugin.util.JetbrainsAppDefinition
+import io.unthrottled.doki.build.plugin.util.JetbrainsThemeMetaDefinition
+import io.unthrottled.doki.build.plugin.util.JetbrainsThemeOnlyDefinition
+import io.unthrottled.doki.build.plugin.util.parseXml
+import io.unthrottled.doki.build.plugin.util.writeXmlToFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -23,22 +29,10 @@ import java.nio.file.StandardOpenOption
 import java.util.*
 import java.util.Optional
 import java.util.stream.Collectors
+import kotlin.collections.get
 import kotlin.text.replaceFirstChar
 import kotlin.text.split
 import kotlin.text.startsWith
-
-data class JetbrainsThemeOnlyDefinition(
-  val id: String,
-  val name: String,
-  val dark: Boolean,
-  val parentTheme: String?,
-  val author: String?,
-  val editorScheme: String,
-  val colors: StringDictionary<Any>,
-  val ui: StringDictionary<Any>,
-  val icons: StringDictionary<Any>,
-)
-
 
 fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
 
@@ -302,7 +296,7 @@ abstract class BuildThemesTask : DefaultTask() {
       ),
       icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
     )
-    val fullMetaTheme = JetbrainsThemeDefinition(
+    val fullMetaTheme = JetbrainsThemeMetaDefinition(
       id = masterThemeDefinition.id + getVarName(variantName),
       name = themeName,
       displayName = masterThemeDefinition.displayName,

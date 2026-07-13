@@ -1,4 +1,4 @@
-package io.unthrottled.doki.build.plugin
+package io.unthrottled.doki.build.plugin.util
 
 import groovy.util.Node
 import groovy.xml.XmlNodePrinter
