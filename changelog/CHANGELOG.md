@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-07-13
+
 ### Changed
+
 - Migrate `Doki Theme Settings` form **GUI Designer forms** to [Kotlin UI DSL v2](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl-version-2.html)
 - Redesign `Doki Theme Settings` page
 
 ### Removed
+
 - Remove [Theme Randomizer](https://github.com/Unthrottled/theme-randomizer) plugin promotion in settings
 
 ## [3.1.1] - 2026-07-09
@@ -124,7 +128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix [Issue #819](https://github.com/doki-theme/doki-theme-jetbrains/issues/820): Hatsune Miku theme's Visual Line &
   Hard wrap guides' color matching the editor background, making it hard to see
 
-[Unreleased]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v2.2.0...v3.0.0

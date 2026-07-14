@@ -107,7 +107,7 @@ changelog {
   """.trimIndent()
   }
   repositoryUrl = "https://github.com/ZimCodes/doki-theme-jetbrains"
-  header = "[${version.get()}] - ${date()}"
+  header = "${version.get()} - ${date()}"
 }
 
 tasks {
