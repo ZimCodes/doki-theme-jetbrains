@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Migrate `Doki Theme Settings` form **GUI Designer forms** to [Kotlin UI DSL v2](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl-version-2.html)
+- Migrate `Doki Theme Settings` from **GUI Designer forms** to [Kotlin UI DSL v2](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl-version-2.html)
 - Redesign `Doki Theme Settings` page
 
 ### Removed
