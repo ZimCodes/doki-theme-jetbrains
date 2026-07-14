@@ -9,6 +9,7 @@ import io.unthrottled.doki.build.jvm.tools.ColorTools.isColorCode
 import io.unthrottled.doki.build.jvm.tools.GroupToNameMapping.getLafNamePrefix
 import io.unthrottled.doki.build.jvm.tools.PathTools.cleanDirectory
 import io.unthrottled.doki.build.plugin.ThemeVariant
+import io.unthrottled.doki.build.plugin.util.ConstructionFunctions
 import io.unthrottled.doki.build.plugin.util.JetbrainsAppDefinition
 import io.unthrottled.doki.build.plugin.util.JetbrainsThemeMetaDefinition
 import io.unthrottled.doki.build.plugin.util.JetbrainsThemeOnlyDefinition
@@ -113,7 +114,7 @@ abstract class BuildThemesTask : DefaultTask() {
     val jetbrainsDokiThemeDefinitionDirectory = getThemeDefinitionDirectory()
 
     val variantName = variantName.get()
-    CommonConstructionFunctions.getAllJetbrainsDefinitions(
+    ConstructionFunctions.getAllJetbrainsDefinitions(
       DokiProduct.JETBRAINS_THEME,
       jetbrainsDokiThemeDefinitionDirectory,
       masterThemesDirectory,
