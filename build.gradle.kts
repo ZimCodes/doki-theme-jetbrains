@@ -1,4 +1,6 @@
 import io.unthrottled.doki.build.plugin.ThemeVariant
+import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.date
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,6 +8,7 @@ plugins {
   alias(libs.plugins.kotlin)
   id("java") // Java support
   alias(libs.plugins.intellij.platform)
+  alias(libs.plugins.changelog)
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -52,7 +55,19 @@ intellijPlatform {
   pluginConfiguration {
     name = providers.gradleProperty("pluginName")
     version = providers.gradleProperty("pluginVersion")
-
+    description = provider {
+      """
+    <p>A large collection of cute anime character themes.</p>
+    <p>Built with love and care! 💖</p>
+    <br/>
+    <p>
+    See the <a href="https://github.com/ZimCodes/doki-theme-jetbrains#documentation">documentation</a> for more details.
+    </p>
+    <br/>
+    <p><img alt="Doki Themes" src="https://raw.githubusercontent.com/ZimCodes/doki-theme-jetbrains/refs/heads/main/assets/screenshots/fate/gray_dark_code.png" width="400"/></p>
+    <br/>
+    """.trimIndent()
+    }
     ideaVersion {
       sinceBuild = providers.gradleProperty("pluginSinceBuild")
       untilBuild = providers.gradleProperty("pluginUntilBuild")
@@ -81,6 +96,20 @@ intellijPlatform {
   }
 }
 
+changelog {
+  path = file("changelog/CHANGELOG.md").canonicalPath
+  introduction = provider {
+    """
+    All notable changes to this project will be documented in this file.
+
+    The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+    and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+  """.trimIndent()
+  }
+  repositoryUrl = "https://github.com/ZimCodes/doki-theme-jetbrains"
+  header = "[${version.get()}] - ${date()}"
+}
+
 tasks {
   wrapper {
     gradleVersion = providers.gradleProperty("gradleVersion").get()
@@ -88,6 +117,11 @@ tasks {
 
   patchPluginXml {
     dependsOn("buildThemes")
+    changeNotes = provider {
+      changelog.renderItem(
+        changelog.getUnreleased().withHeader(false).withEmptySections(false), Changelog.OutputType.HTML
+      )
+    }
   }
 
   // NOTE: To generate a variant: gradlew genTemplates -Pvariant=islands

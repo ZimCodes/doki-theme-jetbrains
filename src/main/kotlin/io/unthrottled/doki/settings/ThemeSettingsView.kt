@@ -1,6 +1,7 @@
 package io.unthrottled.doki.settings
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.DialogPanel
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 
 class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.createThemeSettingsModel()) :
-  SearchableConfigurable, DumbAware {
+  SearchableConfigurable, Configurable.NoMargin, DumbAware {
   private lateinit var discreetCheckBox: Cell<JBCheckBox>
   private lateinit var hideCheckbox: Cell<JBCheckBox>
   private lateinit var dimensionCheckbox: Cell<JBCheckBox>
@@ -36,7 +37,7 @@ class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.cr
           .bindSelected(model::showThemeStatusBar)
           .enabledIf(discreetCheckBox.selected.not())
       }
-      groupRowsRange {
+      rowsRange {
         group(MessageBundle.message("settings.border.title.background.images")) {
           row {
             checkBox(MessageBundle.message("settings.checkbox.background.wallpaper")).bindSelected(model::isDokiBackground)
@@ -60,7 +61,7 @@ class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.cr
 
   private fun createStickerPanel(): DialogPanel {
     return panel {
-      groupRowsRange {
+      rowsRange {
         group(MessageBundle.message("settings.sticker.title.general")) {
           row {
             checkBox(MessageBundle.message("settings.checkbox.show.sticker")).bindSelected(model::areStickersEnabled)

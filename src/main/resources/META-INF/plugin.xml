@@ -3,16 +3,6 @@
   <name>Doki Theme Darcula</name>
   <version>@version@</version>
   <vendor email="alexsimons9999@gmail.com" url="https://github.com/Unthrottled">Unthrottled</vendor>
-  <description>
-    &lt;p&gt;
-    Cute anime character themes! &lt;br/&gt; This is a large collection of themes built with love and care.
-    &lt;br/&gt;
-    &lt;p&gt;
-    See the &lt;a href="https://github.com/ZimCodes/doki-theme-jetbrains#documentation"&gt;documentation&lt;/a&gt; for more details.
-    &lt;/p&gt;
-    &lt;p&gt;&lt;br/&gt;&lt;img alt="Zero Two Dark" src="https://raw.githubusercontent.com/ZimCodes/doki-theme-jetbrains/main/assets/screenshots/franxx/zero_two_dark_code.png" width="500"/&gt;&lt;/p&gt;
-    &lt;br/&gt;
-        </description>
   <idea-version since-build="251"/>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="io.unthrottled.doki.theme-com.intellij.modules.lang.xml">com.intellij.modules.lang</depends>
