@@ -1,75 +1,24 @@
 package io.unthrottled.doki.settings
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.FontComboBox
-import com.intellij.util.ui.FontInfo
 import io.unthrottled.doki.config.THEME_CONFIG_TOPIC
 import io.unthrottled.doki.config.ThemeConfig
-import io.unthrottled.doki.settings.actors.BackgroundActor
-import io.unthrottled.doki.settings.actors.ConsoleFontActor
-import io.unthrottled.doki.settings.actors.CustomFontSizeActor
-import io.unthrottled.doki.settings.actors.DiscreetModeActor
-import io.unthrottled.doki.settings.actors.EmptyFrameBackgroundActor
-import io.unthrottled.doki.settings.actors.MoveableStickerActor
-import io.unthrottled.doki.settings.actors.StickerActor
-import io.unthrottled.doki.settings.actors.SeeThroughNotificationsActor
-import io.unthrottled.doki.settings.actors.StickerHideActor
-import io.unthrottled.doki.settings.actors.ThemeStatusBarActor
-import io.unthrottled.doki.stickers.CurrentSticker
+import io.unthrottled.doki.settings.actors.*
 import io.unthrottled.doki.stickers.CustomStickerService
 import io.unthrottled.doki.stickers.StickerLevel
+import io.unthrottled.doki.stickers.StickerPaneService
 import io.unthrottled.doki.themes.ThemeManager
-import java.net.URI
-import java.util.Vector
-import javax.swing.DefaultComboBoxModel
-
-data class ThemeSettingsModel(
-  var areStickersEnabled: Boolean,
-  var currentTheme: String,
-  var showThemeStatusBar: Boolean,
-  var currentSticker: CurrentSticker,
-  var isNotShowReadmeAtStartup: Boolean,
-  var isMoveableStickers: Boolean,
-  var isDokiBackground: Boolean,
-  var discreetMode: Boolean,
-  var isEmptyFrameBackground: Boolean,
-  var isCustomSticker: Boolean,
-  var customStickerPath: String,
-  var isCustomFontSize: Boolean,
-  var customFontSizeValue: Int,
-  var isOverrideConsoleFont: Boolean,
-  var capStickerDimensions: Boolean,
-  var maxStickerHeight: Int,
-  var maxStickerWidth: Int,
-  var showSmallStickers: Boolean,
-  var smallMaxStickerHeight: Int,
-  var smallMaxStickerWidth: Int,
-  var consoleFontValue: String,
-  var ignoreScaling: Boolean,
-  var hideOnHover: Boolean,
-  var hideDelayMS: Int,
-  var isSeeThroughNotifications: Boolean,
-  var notificationOpacity: Int,
-) {
-  fun duplicate(): ThemeSettingsModel = copy()
-}
 
 object ThemeSettings {
   const val SETTINGS_ID = "io.unthrottled.doki.settings.ThemeSettings"
   const val THEME_SETTINGS_DISPLAY_NAME = "Doki Theme Settings"
-  val CHANGELOG_URI =
-    URI("https://github.com/doki-theme/doki-theme-jetbrains/blob/main/changelog/CHANGELOG.md")
-  private const val REPOSITORY = "https://github.com/doki-theme/doki-theme-jetbrains"
-  const val ULTIMATE_INSTRUCTIONS = "$REPOSITORY/wiki/Ultimate-Theme-Setup"
-  val ISSUES_URI = URI("$REPOSITORY/issues")
-  val REVIEW_URI = URI("https://plugins.jetbrains.com/plugin/10804-the-doki-theme/reviews")
 
   @JvmStatic
   fun createThemeSettingsModel(): ThemeSettingsModel =
     ThemeSettingsModel(
       areStickersEnabled = ThemeConfig.getInstance().currentStickerLevel == StickerLevel.ON,
-      currentTheme = ThemeManager.getInstance().currentTheme.map { it.name }.orElseGet { ThemeManager.DEFAULT_THEME_NAME },
+      currentTheme = ThemeManager.getInstance().currentTheme.map { it.name }
+        .orElseGet { ThemeManager.DEFAULT_THEME_NAME },
       showThemeStatusBar = ThemeConfig.getInstance().showThemeStatusBar,
       currentSticker = ThemeConfig.getInstance().currentSticker,
       isNotShowReadmeAtStartup = ThemeConfig.getInstance().isNotShowReadmeAtStartup,
@@ -138,32 +87,7 @@ object ThemeSettings {
     ).themeConfigUpdated(ThemeConfig.getInstance())
   }
 
-  fun createThemeComboBoxModel(settingsSupplier: () -> ThemeSettingsModel): ComboBox<String> {
-    val themeComboBox =
-      ComboBox(
-        DefaultComboBoxModel(
-          Vector(
-            ThemeManager.getInstance().allThemes
-              .sortedBy { theme -> theme.name }
-              .map { it.name },
-          ),
-        ),
-      )
-    themeComboBox.model.selectedItem = settingsSupplier().currentTheme
-    themeComboBox.addActionListener {
-      settingsSupplier().currentTheme = themeComboBox.model.selectedItem as String
-    }
-    return themeComboBox
-  }
-
-  fun createConsoleFontComboBoxModel(settingsSupplier: () -> ThemeSettingsModel): FontComboBox {
-    val fontComboBox = FontComboBox()
-    fontComboBox.addActionListener {
-      val fontInfo = fontComboBox.model.selectedItem as? FontInfo
-      if (fontInfo != null) {
-        settingsSupplier().consoleFontValue = fontInfo.font.name
-      }
-    }
-    return fontComboBox
+  fun resetStickerPosition() {
+    StickerPaneService.getInstance().resetMargins()
   }
 }

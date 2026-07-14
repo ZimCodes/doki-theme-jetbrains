@@ -1,7 +1,8 @@
-package io.unthrottled.doki.build.plugin
+package io.unthrottled.doki.build.plugin.tasks
 
 import io.unthrottled.doki.build.jvm.models.AssetTemplateDefinition
 import io.unthrottled.doki.build.jvm.tools.CommonConstructionFunctions
+import io.unthrottled.doki.build.plugin.ThemeVariant
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property

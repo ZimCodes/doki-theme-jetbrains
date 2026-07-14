@@ -1,4 +1,4 @@
-package io.unthrottled.doki.build.plugin
+package io.unthrottled.doki.build.plugin.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty

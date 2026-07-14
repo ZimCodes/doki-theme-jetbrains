@@ -1,5 +1,6 @@
 package io.unthrottled.doki.build.plugin
 
+import io.unthrottled.doki.build.plugin.tasks.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project

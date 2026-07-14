@@ -32,6 +32,9 @@ object HttpClientFactory {
 }
 
 object AssetManager {
+  /* TODO: update asset links to target new repo location.
+  * Not sure if i need the deleted 'misc/' folder. https://github.com/doki-theme/doki-theme-assets/tree/master/misc
+   */
   const val ASSET_SOURCE = "https://doki.assets.unthrottled.io"
   const val FALLBACK_ASSET_SOURCE = "https://raw.githubusercontent.com/doki-theme/doki-theme-assets/master"
 
@@ -118,8 +121,10 @@ object AssetManager {
     when {
       hasAssetChanged(localAssetPath, remoteAssetUrl) ->
         downloadAndGetAssetUrl(localAssetPath, remoteAssetUrl)
+
       Files.exists(localAssetPath) ->
         localAssetPath.toUri().toString().toOptional()
+
       else -> Optional.empty()
     }
 

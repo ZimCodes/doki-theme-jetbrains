@@ -13,7 +13,11 @@ out/
 
 # Gradle
 .gradle/
-build/
+build/*
+doki-build-plugin/build/
+# Keeps doki-build-plugin files
+!build/plugin/
+!build/plugin/**
 classes/
 
 ./club_members/
