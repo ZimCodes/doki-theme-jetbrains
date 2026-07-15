@@ -40,3 +40,6 @@ doki-build-plugin/assets/themes/**/!*.darcula*.json
 
 # Generated base templates
 doki-build-plugin/assets/templates/*.islands*.json
+
+# Generated plugins.xml
+src/main/resources/META-INF/plugin.xml
