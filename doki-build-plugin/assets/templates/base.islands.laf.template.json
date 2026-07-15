@@ -2,6 +2,7 @@
   "type": "LAF",
   "name": "base islands",
   "ui": {
+    "Islands": 1,
     "ToolWindow.background": "headerColor",
     "ToolWindow.Header.background": "headerColor",
     "ToolWindow.Header.inactiveBackground": "headerColor",
@@ -11,8 +12,8 @@
     "MainToolbar.Dropdown.foreground": "foregroundColor",
     "MainToolbar.foreground": "foregroundColor",
     "Island.borderColor": "headerColor",
-    "Island.arc": "22",
-    "Island.borderWidth": "6",
+    "Island.arc": 22,
+    "Island.borderWidth": 6,
     "EditorTabs.underlinedBorderColor": "accentColor",
     "EditorTabs.inactiveUnderlinedTabBorderColor": "accentColorLessTransparent",
     "EditorTabs.inactiveUnderlinedTabBackground": "highlightColor",
