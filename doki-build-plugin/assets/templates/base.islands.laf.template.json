@@ -24,6 +24,11 @@
     "StatusBar.Breadcrumbs.foreground": "foregroundColor",
     "StatusBar.Widget.hoverForeground": "selectionForeground",
     "StatusBar.Widget.foreground": "foregroundColor",
-    "Tree.selectionInactiveForeground": "foregroundColor"
+    "Tree.selectionInactiveForeground": "foregroundColor",
+    "MainMenu.foreground": "foregroundColor",
+    "Editor.ToolTip.foreground": "foregroundColor",
+    "Notification.ToolWindow.errorForeground": "foregroundColor",
+    "Notification.ToolWindow.informativeForeground": "foregroundColor",
+    "Notification.ToolWindow.warningForeground": "foregroundColor"
   }
 }
