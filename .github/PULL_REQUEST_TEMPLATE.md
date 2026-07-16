@@ -1,5 +1,3 @@
-<!-- Provide a general summary of your changes in the Title above -->
-
 #### Description
 <!-- Describe your changes in detail -->
 
@@ -20,4 +18,4 @@
 <!-- Go over all the following points, and put an `x` in all the boxes . -->
 <!-- If you're unsure about any of these, don't hesitate to ask. I'm here to help! -->
 - [ ] I updated the version.
-- [ ] I updated the changelog with the new functionality.
+- [ ] I updated the **CHANGELOG** with the new functionality.
