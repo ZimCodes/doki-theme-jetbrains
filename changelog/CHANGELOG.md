@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Brightens text in the following areas for dark Islands themes:
+  - File tree tool window 
+  - Status bar
+  - Top MainToolbar
+  - CompletionPopup (for DxD Rias Onyx theme)
+  - Editor Tooltip
+  - Main Menu bar
+
 ## [3.2.0] - 2026-07-13
 
 ### Changed
