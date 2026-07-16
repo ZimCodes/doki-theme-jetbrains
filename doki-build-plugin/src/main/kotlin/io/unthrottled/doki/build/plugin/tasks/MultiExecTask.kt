@@ -20,9 +20,6 @@ abstract class MultiExecTask : Exec() {
     LINUX, WINDOWS, AUTO
   }
 
-  @get:Input
-  abstract val commandExecList: ListProperty<String>
-
   @get:InputDirectory
   abstract val startDirectory: DirectoryProperty
 
