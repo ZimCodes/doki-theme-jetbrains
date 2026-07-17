@@ -1,5 +1,4 @@
 import io.unthrottled.doki.build.plugin.ThemeVariant
-import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.date
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
