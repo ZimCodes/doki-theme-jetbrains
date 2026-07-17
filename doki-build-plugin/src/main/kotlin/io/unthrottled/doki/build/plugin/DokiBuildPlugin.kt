@@ -18,7 +18,9 @@ class DokiBuildPlugin : Plugin<Project> {
     val variant: String = project.findProperty("variant") as String? ?: ThemeVariant.DARCULA.lowercase
     fun isDefaultVariant(): Boolean =
       !project.hasProperty("variant") || variant.contains(ThemeVariant.DARCULA.lowercase)
+
     fun isCustomVariant(): Boolean = variant.startsWith("custom")
+
     // Removes 'custom-' from 'custom-<variant>'
     fun cutPrefix(variantName: String?): String = variantName?.replaceFirst("[a-z]+-".toRegex(), "") ?: ""
 
@@ -63,7 +65,7 @@ class DokiBuildPlugin : Plugin<Project> {
     project.tasks.register<MultiExecTask>("genCustomDokiColorTemplate") {
       description =
         "Generates a doki template based on all newly created custom doki color variant found in 'masterThemes/' folder."
-      dependsOn("compileJava","compileKotlin","generateManifest")
+      dependsOn("compileJava", "compileKotlin", "generateManifest")
       if (!isDefaultVariant()) {
         dependsOn("genVariantTemplates")
       }
@@ -98,8 +100,14 @@ class DokiBuildPlugin : Plugin<Project> {
     }
     project.tasks.register<MultiExecTask>("getRepos") {
       description = "Retrieves all repositories doki-theme-jetbrains relies on."
-      val command = "getRepoDependencies.sh"
-      commandExecMap.put(MultiExecTask.OSType.AUTO, listOf(command))
+      val gitCMD = "git clone"
+      val githubBaseURL = "https://github.com/ZimCodes"
+      val repoNames =
+        mapOf("doki-master-theme" to "masterThemes", "doki-build-source-jvm" to null, "doki-build-source" to null)
+      val commands = repoNames.map { (repoName, folderName) ->
+        "$gitCMD $githubBaseURL/$repoName${folderName?.let { " $folderName" } ?: ""}"
+      }
+      commandExecMap.put(MultiExecTask.OSType.AUTO, commands)
     }
     project.tasks.register<PatchHTMLTask>("patchHTML") {
       htmlDirectory.set(project.layout.projectDirectory.dir("build/html"))

@@ -3,8 +3,9 @@ Development Setup
 
 ## Requirements
 
-- Java 21+
+- Java 25+
 - IntelliJ IDEA
+- Plugin DevKit (IntelliJ bundled plugin)
 - Typescript
 - Node.js 24+
 - yarn v4+
