@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-07-17
+
 ### Added
+
 - Support for build 2026.2
 
 ## [3.2.1] - 2026-07-16
@@ -144,7 +147,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix [Issue #819](https://github.com/doki-theme/doki-theme-jetbrains/issues/820): Hatsune Miku theme's Visual Line &
   Hard wrap guides' color matching the editor background, making it hard to see
 
-[Unreleased]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.2.1...HEAD
+[Unreleased]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.2.1...v4.0.0
 [3.2.1]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/ZimCodes/doki-theme-jetbrains/compare/v3.1.0...v3.1.1
