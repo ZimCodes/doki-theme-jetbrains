@@ -12,9 +12,9 @@ Development Setup
 
 ## Getting Dependencies
 
-doki-theme-jetbrains utilizes Gradle to make automating tasks easier. The
-first thing we will need is to grab all the other doki projects doki-theme-jetbrains depends
-on. To do this we will use a custom Gradle task called `initDokiProject`.
+doki-theme-jetbrains utilizes Gradle to make automating tasks easier. The first thing we will need is to grab all the
+other doki projects doki-theme-jetbrains depends on. To do this we will use a custom Gradle task called
+`initDokiProject`.
 
 ```bash
 ./gradlew initDokiProject
@@ -78,8 +78,8 @@ The next steps are:
 - Map information about each doki theme including their name and location in `plugin.xml`
 - Update the `name` and `id` key in plugin.xml to match the name of the current variant being made into a plugin.
 
-Phew! That's a lot to do. Luckily, we can use a task called `buildThemes` to accomplish these tasks.
-We must specify what variant we would like to build using the formula, `-Pvariant=<variant-name>`. `darcula`
+Phew! That's a lot to do. Luckily, we can use a task called `buildThemes` to accomplish these tasks. We must specify
+what variant we would like to build using the formula, `-Pvariant=<variant-name>`. `darcula`
 is the default choice if `-P` option is not used.
 
 ```bash
@@ -106,10 +106,9 @@ These are examples of building custom doki variants. See [NEW_COLOR_THEME.md](./
 
 ## Extra: Building a Plugin
 
-Once everything above have been completed, we can now create a plugin! We will
-use **Intellij Platform's** `buildPlugin` task. We must specify what variant we would like our plugin to build, using
-the
-formula, `-Pvariant=<variant-name>`. `darcula` is the default choice if `-P` option is not used.
+Once everything above have been completed, we can now create a plugin! We will use **Intellij Platform's** `buildPlugin`
+task. We must specify what variant we would like our plugin to build, using the formula, `-Pvariant=<variant-name>`.
+`darcula` is the default choice if `-P` option is not used.
 
 **NOTE:** `buildPlugin` calls `buildThemes` before executing. **This means you can _skip_ `buildThemes` task if you ever
 decide to just run `buildPlugin`!**
@@ -124,9 +123,18 @@ decide to just run `buildPlugin`!**
 ./gradlew buildPlugin -Pvariant=islands
 ```
 
-## Afterwords
+## Shortcuts
+
+### CLI
 
 Majority of the steps above could be skipped. If this is your first time using this project run `initDokiProject` task.
-From here, all you would need to run for now on is the `buildThemes` task according to [Building Themes](#building-themes). 
-You can even skip `buildThemes` and instead use `buildPlugin` as stated in [Extra: Building a plugin](#extra-building-a-plugin),
-since it calls `buildThemes` anyway...
+From here, all you would need to run going forward is the `buildThemes` task according
+to [Building Themes](#building-themes). You can even skip `buildThemes` and instead use `buildPlugin` as stated
+in [Extra: Building a plugin](#extra-building-a-plugin), since it calls `buildThemes` anyway...
+
+### IntelliJ Run Configuration
+
+Alternative to using CLI.
+
+The project comes with preset `Run` configurations. To access them, click on the dropdown menu found in this image:
+![Run Configuration Location](../assets/contributingAssets/run_location.jpg)
