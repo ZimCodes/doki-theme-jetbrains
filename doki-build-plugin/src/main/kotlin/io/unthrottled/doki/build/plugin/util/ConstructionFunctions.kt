@@ -94,7 +94,7 @@ object ConstructionFunctions {
 
   private fun removeJetbrainsDir(path: Path, fileName: Path): Path {
     if (!path.parent.endsWith("jetbrains")) {
-      return path;
+      return path
     }
     return path.parent.resolveSibling(fileName)
   }

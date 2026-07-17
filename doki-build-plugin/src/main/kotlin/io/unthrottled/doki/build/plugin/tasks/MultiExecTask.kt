@@ -1,7 +1,6 @@
 package io.unthrottled.doki.build.plugin.tasks
 
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Input

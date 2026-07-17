@@ -7,7 +7,6 @@ import com.intellij.ui.JreHiDpiUtil
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBLayeredPane
-import com.intellij.ui.jcef.HwFacadeJPanel
 import com.intellij.ui.scale.JBUIScale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +76,7 @@ internal class StickerPane(
   val type: StickerType,
   initialMargin: Margin,
   private val stickerListener: StickerListener,
-) : HwFacadeJPanel(), Disposable, Logging {
+) : JPanel(), Disposable, Logging {
   private lateinit var stickerContent: JPanel
 
   var ignoreScaling = ThemeConfig.getInstance().ignoreScaling
@@ -99,11 +98,7 @@ internal class StickerPane(
 
   private val isSmol = StickerType.SMOL == type
   private var positionable: Boolean =
-    if (isSmol) {
-      true
-    } else {
-      ThemeConfig.getInstance().isMoveableStickers
-    }
+    isSmol || ThemeConfig.getInstance().isMoveableStickers
 
   fun setPositionable(shouldPosition: Boolean) {
     positionable = shouldPosition

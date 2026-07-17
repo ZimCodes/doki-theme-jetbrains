@@ -1,5 +1,4 @@
 import io.unthrottled.doki.build.plugin.ThemeVariant
-import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.date
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -16,9 +15,9 @@ version = providers.gradleProperty("pluginVersion").get()
 
 // Set the JVM language level used to build the project.
 kotlin {
-  jvmToolchain(21)
+  jvmToolchain(25)
   compilerOptions {
-    jvmTarget.set(JvmTarget.JVM_21)
+    jvmTarget.set(JvmTarget.JVM_25)
   }
 }
 
@@ -117,11 +116,6 @@ tasks {
 
   patchPluginXml {
     dependsOn("buildThemes")
-    changeNotes = provider {
-      changelog.renderItem(
-        changelog.getUnreleased().withHeader(false).withEmptySections(false), Changelog.OutputType.HTML
-      )
-    }
   }
 
   // NOTE: To generate a variant: gradlew genTemplates -Pvariant=islands

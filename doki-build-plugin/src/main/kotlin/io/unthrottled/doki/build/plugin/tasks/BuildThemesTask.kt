@@ -35,8 +35,6 @@ import kotlin.text.replaceFirstChar
 import kotlin.text.split
 import kotlin.text.startsWith
 
-fun String.getStickerName(): String = this.substring(this.lastIndexOf("/") + 1)
-
 @CacheableTask
 abstract class BuildThemesTask : DefaultTask() {
   @get:Input
@@ -85,7 +83,7 @@ abstract class BuildThemesTask : DefaultTask() {
 
   private fun getThemeSchema(): ThemeDefinitionSchema =
     newInputStream(resMasterThemeSchema.get().asFile.toPath()).use {
-      val inputStreamReader: InputStreamReader = InputStreamReader(it, StandardCharsets.UTF_8)
+      val inputStreamReader = InputStreamReader(it, StandardCharsets.UTF_8)
       CommonConstructionFunctions.gson.fromJson(
         inputStreamReader,
         ThemeDefinitionSchema::class.java
@@ -350,7 +348,7 @@ abstract class BuildThemesTask : DefaultTask() {
     mapWithNewStuff["editorAccentColor"] = mapWithNewStuff.getOrDefault(
       "editorAccentColor",
       themeDefinition.overrides?.editorScheme
-        ?.colors?.get("accentColor")?.toString() ?: colors["accentColor"]!!.toString()
+        ?.colors?.get("accentColor") ?: colors["accentColor"]!!
     )
 
     // sort to make diffing changes easier for
@@ -691,12 +689,12 @@ abstract class BuildThemesTask : DefaultTask() {
             parentScheme.split(",").map { it.trim() }
           }
         }
-      ) { _parentTheme, childTheme ->
-        val parentTheme = _parentTheme.clone() as Node
+      ) {parentTheme, childTheme ->
+        val parentThemeClone = parentTheme.clone() as Node
         childrenICareAbout
           .forEach { attribute ->
             val childList = childTheme[attribute] as NodeList
-            val parentListNode = parentTheme[attribute] as NodeList
+            val parentListNode = parentThemeClone[attribute] as NodeList
             childList.zip(parentListNode)
               .filter { it.first is Node && it.second is Node }
               .map { it.first as Node to it.second as Node }
@@ -720,8 +718,8 @@ abstract class BuildThemesTask : DefaultTask() {
               }
           }
 
-        sortXmlAttributes(parentTheme)
-        parentTheme
+        sortXmlAttributes(parentThemeClone)
+        parentThemeClone
       }
 
     val themeTemplate =
