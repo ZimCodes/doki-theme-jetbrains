@@ -117,11 +117,6 @@ tasks {
 
   patchPluginXml {
     dependsOn("buildThemes")
-    changeNotes = provider {
-      changelog.renderItem(
-        changelog.getUnreleased().withHeader(false).withEmptySections(false), Changelog.OutputType.HTML
-      )
-    }
   }
 
   // NOTE: To generate a variant: gradlew genTemplates -Pvariant=islands
