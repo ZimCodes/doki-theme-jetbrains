@@ -98,8 +98,10 @@ class DokiBuildPlugin : Plugin<Project> {
         )
       )
     }
+    val masterTheme = project.layout.projectDirectory.dir("masterThemes")
     project.tasks.register<MultiExecTask>("getRepos") {
       description = "Retrieves all repositories doki-theme-jetbrains relies on."
+      onlyIf { masterTheme.asFile.exists().not() }
       val gitCMD = "git clone"
       val githubBaseURL = "https://github.com/ZimCodes"
       val repoNames =
