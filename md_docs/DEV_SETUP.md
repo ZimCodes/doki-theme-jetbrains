@@ -41,8 +41,8 @@ If you would like to add a new variant template, see [NEW_VARIANTS.md](./md_docs
 
 The next step is to build these variant templates. Use any of the appropriate run configurations you want to build:
 
-- `build islands`
-- `build darcula`
+- `build [islands]`
+- `build [darcula]`
 
 To build custom doki variants see [NEW_COLOR_THEME.md](./NEW_COLOR_THEME.md)
 
@@ -51,12 +51,12 @@ To build custom doki variants see [NEW_COLOR_THEME.md](./NEW_COLOR_THEME.md)
 Once everything above have been completed, we can now create a plugin using
 [CONTRIBUTING.md](../../doki-theme-icons-jetbrains/CONTRIBUTING.md)
 
-- `plugin darcula`
-- `plugin islands`
+- `plugin [darcula]`
+- `plugin [islands]`
 
-**NOTE:** Using `plugin <variant-name>` automatically calls `build <variant-name>` before executing. **This means you can _skip_
-`build <variant-name>`
-if you ever decide to just run `plugin <variant-name>`!**
+**NOTE:** Using `plugin [<variant-name>]` automatically calls `build [<variant-name>]` before executing. **This means you can _skip_
+`build [<variant-name>]`
+if you ever decide to just run `plugin [<variant-name>]`!
 
 ## Testing Plugin
 
@@ -64,7 +64,7 @@ There are 2 ways to test the plugin.
 
 ### `runIde` Task
 
-Use run configuration, `test <variant-name> plugin`.
+Use run configuration, `test plugin [<variant-name>]`.
 
 ### Build and Use Method
 

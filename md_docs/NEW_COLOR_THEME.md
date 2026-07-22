@@ -41,12 +41,12 @@ This step includes:
 - Relocating your custom theme (s) to `src/main/resources/`
 - Specifying where to find your custom theme (s) in `plugin.xml`
 
-To automate this, use the run configuration, `build custom <variant-name>`.
+To automate this, use the run configuration, `build [custom <variant-name>]`.
 
 ## Publish Plugin
 
 Although the name says *Publish*, you're actually just building the plugin now.
 
-Use run configuration, `plugin custom <variant-name>`, to build the plugin. 
+Use run configuration, `plugin [custom <variant-name>]`, to build the plugin. 
 
 When finished, your newly created plugin can be found at `build/distributions/`!
