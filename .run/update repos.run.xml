@@ -1,16 +1,16 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="build custom darcula" type="GradleRunConfiguration" factoryName="Gradle" folderName="build_themes">
+  <configuration default="false" name="update repos" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-Pvariant=custom-darcula" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value="buildThemes" />
+          <option value="updateRepos" />
         </list>
       </option>
       <option name="vmOptions" />

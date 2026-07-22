@@ -41,37 +41,12 @@ This step includes:
 - Relocating your custom theme (s) to `src/main/resources/`
 - Specifying where to find your custom theme (s) in `plugin.xml`
 
-To automate this, use the Gradle task, `buildThemes`. You must specify a variant, `-Pvariant=custom-<variant>`.
-
-```bash
-# Build 'Darcula' theme variants
-./gradlew buildThemes -Pvariant=custom-darcula
-```
-
-```bash
-# Build 'Islands' theme variants
-./gradlew buildThemes -Pvariant=custom-islands
-```
+To automate this, use the run configuration, `build custom <variant-name>`.
 
 ## Publish Plugin
 
 Although the name says *Publish*, you're actually just building the plugin now.
 
-Use the Gradle task, `buildPlugin` to build the plugin. You must specify a variant, `-Pvariant=custom-<variant>`.
-
-```bash
-# Create 'Darcula' plugin
-./gradlew buildPlugin -Pvariant=custom-darcula
-```
-
-```bash
-# Create 'Islands' plugin
-./gradlew buildPlugin -Pvariant=custom-islands
-```
+Use run configuration, `plugin custom <variant-name>`, to build the plugin. 
 
 When finished, your newly created plugin can be found at `build/distributions/`!
-
-## Extra: Alternative Shortcut
-
-Instead of using the command line interface (CLI)
-use [IntelliJ Run Configuration](./DEV_SETUP.md#intellij-run-configuration).

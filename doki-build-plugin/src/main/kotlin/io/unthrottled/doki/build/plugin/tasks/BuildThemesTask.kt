@@ -13,8 +13,6 @@ import io.unthrottled.doki.build.plugin.util.ConstructionFunctions
 import io.unthrottled.doki.build.plugin.util.JetbrainsAppDefinition
 import io.unthrottled.doki.build.plugin.util.JetbrainsThemeMetaDefinition
 import io.unthrottled.doki.build.plugin.util.JetbrainsThemeOnlyDefinition
-import io.unthrottled.doki.build.plugin.util.parseXml
-import io.unthrottled.doki.build.plugin.util.writeXmlToFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
