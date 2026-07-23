@@ -8,7 +8,6 @@ import io.unthrottled.doki.build.jvm.models.Overrides
 import io.unthrottled.doki.build.jvm.models.StringDictionary
 
 data class JetbrainsThemeOnlyDefinition(
-  val id: String,
   val name: String,
   val dark: Boolean,
   val parentTheme: String?,
@@ -31,7 +30,6 @@ data class JetbrainsAppDefinition(
 ): HasId
 
 data class JetbrainsThemeMetaDefinition(
-  override val id: String,
   val name: String,
   val displayName: String?,
   val dark: Boolean,
@@ -45,7 +43,7 @@ data class JetbrainsThemeMetaDefinition(
   val ui: StringDictionary<Any>,
   val icons: StringDictionary<Any>,
   val meta: StringDictionary<String>
-) : HasId
+)
 
 data class DokiThemeTemplate(
   override val id: String,

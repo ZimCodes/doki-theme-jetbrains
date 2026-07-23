@@ -38,15 +38,19 @@ This step includes:
 - Generating a `plugin.xml`
 - Generating doki theme templates for how to build each doki theme
 - Building your custom theme (s)
-- Relocating your custom theme (s) to `src/main/resources/`
+- Relocating your custom theme (s) to `src/main/resources/META-INF`
 - Specifying where to find your custom theme (s) in `plugin.xml`
 
 To automate this, use the run configuration, `build [custom <variant-name>]`.
 
-## Publish Plugin
+## Create Plugin
 
-Although the name says *Publish*, you're actually just building the plugin now.
-
-Use run configuration, `plugin [custom <variant-name>]`, to build the plugin. 
+Use run configuration, `plugin [custom <variant-name>]`, to build the plugin.
 
 When finished, your newly created plugin can be found at `build/distributions/`!
+
+## Share Plugin
+
+You can share your custom plugin with the community
+at [Custom Color Schemes Discussions](https://github.com/ZimCodes/doki-theme-jetbrains/discussions/categories/custom-color-schemes)
+with the potential of having it added to the main `custom` plugin!

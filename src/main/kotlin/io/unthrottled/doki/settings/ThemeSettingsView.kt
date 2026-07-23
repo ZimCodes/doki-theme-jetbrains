@@ -192,17 +192,32 @@ class ThemeSettingsView(private val model: ThemeSettingsModel = ThemeSettings.cr
     }
   }
 
-  override fun isModified(): Boolean = generalPanel.isModified() || stickerPanel.isModified() || fontPanel.isModified()
+  override fun isModified(): Boolean =
+    isPanelsInitialized() && (generalPanel.isModified() || stickerPanel.isModified() || fontPanel.isModified())
+
+  private fun isPanelsInitialized(): Boolean =
+    ::generalPanel.isInitialized && ::generalPanel.isInitialized && ::fontPanel.isInitialized
+
   override fun apply() {
-    generalPanel.apply()
-    stickerPanel.apply()
-    fontPanel.apply()
-    ThemeSettings.apply(model)
+    safelyExecute {
+      generalPanel.apply()
+      stickerPanel.apply()
+      fontPanel.apply()
+      ThemeSettings.apply(model)
+    }
+  }
+
+  private fun safelyExecute(block: () -> Unit) {
+    if (isPanelsInitialized()) {
+      block()
+    }
   }
 
   override fun reset() {
-    generalPanel.reset()
-    stickerPanel.reset()
-    fontPanel.reset()
+    safelyExecute {
+      generalPanel.reset()
+      stickerPanel.reset()
+      fontPanel.reset()
+    }
   }
 }
