@@ -13,8 +13,6 @@
       "Checkbox.Foreground.Selected": "baseBackground",
       "Checkbox.Background.Selected": "accentColor",
       "Checkbox.Border.Selected": "accentColor",
-      "Checkbox.Focus.Thin.Default": "baseBackground",
-      "Checkbox.Focus.Thin.Selected": "baseBackground",
       "Checkbox.Focus.Wide": "accentColor",
       "Checkbox.Foreground.Disabled": "baseBackground",
       "Checkbox.Background.Disabled": "disabledColor"

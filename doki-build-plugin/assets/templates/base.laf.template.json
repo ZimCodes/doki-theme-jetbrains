@@ -609,20 +609,7 @@
       "Checkbox.Background.Disabled": "#00000000",
       "Checkbox.Border.Disabled": "baseIconColor",
       "Checkbox.Foreground.Disabled": "baseIconColor",
-      "Checkbox.Focus.Thin.Default": "accentColor",
-      "Checkbox.Focus.Thin.Selected": "accentColor",
-      "Checkbox.Focus.Wide": "accentColor",
-      "Checkbox.Background.Default.Dark": "#00000000",
-      "Checkbox.Border.Default.Dark": "baseIconColor",
-      "Checkbox.Background.Selected.Dark": "#00000000",
-      "Checkbox.Border.Selected.Dark": "baseIconColor",
-      "Checkbox.Foreground.Selected.Dark": "accentColor",
-      "Checkbox.Background.Disabled.Dark": "#00000000",
-      "Checkbox.Border.Disabled.Dark": "baseIconColor",
-      "Checkbox.Foreground.Disabled.Dark": "baseIconColor",
-      "Checkbox.Focus.Thin.Default.Dark": "accentColor",
-      "Checkbox.Focus.Thin.Selected.Dark": "accentColor",
-      "Checkbox.Focus.Wide.Dark": "accentColor"
+      "Checkbox.Focus.Wide": "accentColor"
     }
   }
 }

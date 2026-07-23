@@ -269,7 +269,6 @@ abstract class BuildThemesTask : DefaultTask() {
     val colors = validateColors(masterThemeDefinition, resolvedNamedColors)
     val themeName = getThemeName(masterThemeDefinition.group, masterThemeDefinition.name, variantName)
     val finalTheme = JetbrainsThemeOnlyDefinition(
-      id = masterThemeDefinition.id + getVarName(variantName),
       name = themeName,
       dark = masterThemeDefinition.dark,
       author = masterThemeDefinition.author,
@@ -294,7 +293,6 @@ abstract class BuildThemesTask : DefaultTask() {
       icons = getIcons(resolvedNamedColors, constructableLookAndFeel, initialParentTemplateName),
     )
     val fullMetaTheme = JetbrainsThemeMetaDefinition(
-      id = masterThemeDefinition.id + getVarName(variantName),
       name = themeName,
       displayName = masterThemeDefinition.displayName,
       dark = masterThemeDefinition.dark,
